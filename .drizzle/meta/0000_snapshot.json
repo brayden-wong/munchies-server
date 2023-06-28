@@ -1,0 +1,141 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "6256b511-44e0-4e52-88eb-aaabe0bf6cb5",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(36)",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "'vncup1dwoy1jai3or8sjabsimxo70ne7e1e5'"
+        },
+        "refreshToken": {
+          "name": "refreshToken",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiration": {
+          "name": "expiration",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "tokenIndex": {
+          "name": "tokenIndex",
+          "columns": [
+            "refreshToken"
+          ],
+          "isUnique": true
+        },
+        "userIndex": {
+          "name": "userIndex",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "sessions_userId_users_id_fk": {
+          "name": "sessions_userId_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {}
+    },
+    "users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(36)",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "'r0c19lxcica4dfbzopfrjpgkkdrglhopp0gu'"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deletedAt": {
+          "name": "deletedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": null
+        }
+      },
+      "indexes": {
+        "emailIndex": {
+          "name": "emailIndex",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
