@@ -14,6 +14,7 @@ export const users = pgTable(
   {
     id: varchar("id", { length: 36 }).primaryKey(),
     name: varchar("name", { length: 60 }).notNull(),
+    username: varchar("username", { length: 16 }).notNull(),
     email: varchar("email", { length: 60 }).notNull(),
     password: varchar("password", { length: 255 }),
 
@@ -24,6 +25,7 @@ export const users = pgTable(
   },
   (table) => {
     return {
+      usernameIndex: uniqueIndex("usernameIndex").on(table.username),
       emailIndex: uniqueIndex("emailIndex").on(table.email),
     };
   },

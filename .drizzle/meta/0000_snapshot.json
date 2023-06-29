@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "6256b511-44e0-4e52-88eb-aaabe0bf6cb5",
+  "id": "93f5a0ee-fc0f-473e-b0f2-b90f2167c95d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "sessions": {
@@ -12,8 +12,7 @@
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "'vncup1dwoy1jai3or8sjabsimxo70ne7e1e5'"
+          "notNull": true
         },
         "refreshToken": {
           "name": "refreshToken",
@@ -75,14 +74,20 @@
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "'r0c19lxcica4dfbzopfrjpgkkdrglhopp0gu'"
+          "notNull": true
         },
         "name": {
           "name": "name",
           "type": "varchar(60)",
           "primaryKey": false,
           "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
         },
         "email": {
           "name": "email",
@@ -95,6 +100,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
+        },
+        "deactivated": {
+          "name": "deactivated",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -119,6 +131,13 @@
         }
       },
       "indexes": {
+        "usernameIndex": {
+          "name": "usernameIndex",
+          "columns": [
+            "username"
+          ],
+          "isUnique": true
+        },
         "emailIndex": {
           "name": "emailIndex",
           "columns": [

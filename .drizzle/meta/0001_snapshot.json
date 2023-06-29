@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "d21cb59d-9862-45ee-9860-395dceeebee8",
-  "prevId": "6256b511-44e0-4e52-88eb-aaabe0bf6cb5",
+  "id": "127c3ddf-5841-4c77-963b-90b27630b850",
+  "prevId": "93f5a0ee-fc0f-473e-b0f2-b90f2167c95d",
   "tables": {
     "sessions": {
       "name": "sessions",
@@ -12,8 +12,7 @@
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "'bpqu5yll9b99x8fhzddj5m69t22jddpb337k'"
+          "notNull": true
         },
         "refreshToken": {
           "name": "refreshToken",
@@ -75,12 +74,17 @@
           "name": "id",
           "type": "varchar(36)",
           "primaryKey": true,
-          "notNull": true,
-          "default": "'lauhjdsdlo2yd1g0dapjtr897pwebh6qm7hn'"
+          "notNull": true
         },
         "name": {
           "name": "name",
           "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
@@ -126,6 +130,13 @@
         }
       },
       "indexes": {
+        "usernameIndex": {
+          "name": "usernameIndex",
+          "columns": [
+            "username"
+          ],
+          "isUnique": true
+        },
         "emailIndex": {
           "name": "emailIndex",
           "columns": [
