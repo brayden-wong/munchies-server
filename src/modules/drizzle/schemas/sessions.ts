@@ -1,11 +1,10 @@
 import { pgTable, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { cuid } from "@/utils";
 
 export const sessions = pgTable(
   "sessions",
   {
-    id: varchar("id", { length: 36 }).primaryKey().default(cuid()),
+    id: varchar("id", { length: 36 }).primaryKey(),
     refreshToken: varchar("refreshToken", { length: 255 }).notNull(),
     expiration: timestamp("expiration").notNull(),
     userId: varchar("userId", { length: 36 })

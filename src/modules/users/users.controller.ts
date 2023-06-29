@@ -7,17 +7,19 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Req,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./users.types";
+import { Public, UserId } from "@/utils";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(":id")
-  async getUser(@Param("id") id: string) {
+  @Get()
+  async getUser(@UserId() id: string) {
+    console.log(id);
     const result = await this.usersService.getUser({ query: "id", value: id });
 
     if (!result)
@@ -30,7 +32,8 @@ export class UsersController {
     };
   }
 
-  @Get()
+  @Public()
+  @Get("all")
   async getUsers() {
     const users = await this.usersService.getUsers();
 
@@ -48,11 +51,8 @@ export class UsersController {
     };
   }
 
-  @Patch(":id")
-  async updateUser(
-    @Param("id") id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  @Patch()
+  async updateUser(@UserId() id: string, @Body() updateUserDto: UpdateUserDto) {
     const result = await this.usersService.updateUser(id, updateUserDto);
 
     if (!result)
@@ -65,8 +65,8 @@ export class UsersController {
     };
   }
 
-  @Patch("activate/:id")
-  async activateUser(@Param("id") id: string) {
+  @Patch("activate")
+  async activateUser(@UserId() id: string) {
     const result = await this.usersService.activateUser(id);
 
     if (!result)
@@ -79,8 +79,8 @@ export class UsersController {
     };
   }
 
-  @Patch("deactivate/:id")
-  async deactivateUser(@Param("id") id: string) {
+  @Patch("deactivate")
+  async deactivateUser(@UserId() id: string) {
     const result = await this.usersService.deactivateUser(id);
 
     if (!result)
@@ -93,8 +93,8 @@ export class UsersController {
     };
   }
 
-  @Delete(":id")
-  async deleteUser(@Param("id") id: string) {
+  @Delete()
+  async deleteUser(@UserId() id: string) {
     const result = await this.usersService.deleteUser(id);
 
     if (!result)

@@ -5,7 +5,8 @@ import { CreateUserDto, FindOneParams, UpdateUserDto } from "./users.types";
 
 import type { Database } from "@/modules/drizzle";
 import { HashService } from "../utils";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, like } from "drizzle-orm";
+import { cuid } from "@/utils";
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,6 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    console.table(createUserDto);
     const { password, email, ...userDetails } = createUserDto;
 
     try {
@@ -33,11 +33,13 @@ export class UsersService {
           throw new Error("User already exists");
         }
 
+        const id = cuid();
         const hashedPassword = await this.hashService.hash(password, 10);
 
         const [result] = await tx
           .insert(users)
           .values({
+            id,
             ...userDetails,
             email: lowerCaseEmail,
             password: hashedPassword,
