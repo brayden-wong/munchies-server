@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 
-import { InjectDrizzle, users } from "@/modules/drizzle";
+import { InjectDrizzle, accounts, sessions, users } from "@/modules/drizzle";
 import { CreateUserDto, FindOneParams, UpdateUserDto } from "./users.types";
 
 import type { Database } from "@/modules/drizzle";
@@ -16,7 +16,7 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    const { password, email, ...userDetails } = createUserDto;
+    const { email, ...userDetails } = createUserDto;
 
     try {
       const user = await this.db.transaction(async (tx) => {
@@ -34,7 +34,10 @@ export class UsersService {
         }
 
         const id = cuid();
-        const hashedPassword = await this.hashService.hash(password, 10);
+        if (userDetails.password)
+          userDetails.password = await this.hashService.hash(
+            userDetails.password,
+          );
 
         const [result] = await tx
           .insert(users)
@@ -42,7 +45,6 @@ export class UsersService {
             id,
             ...userDetails,
             email: lowerCaseEmail,
-            password: hashedPassword,
           })
           .returning();
 
@@ -170,12 +172,24 @@ export class UsersService {
   async deleteUser(id: string) {
     try {
       const user = await this.db.transaction(async (tx) => {
-        const result = await tx.query.users.findFirst({
-          columns: { id: true },
-          where: eq(users.id, id),
-        });
+        const [result] = await this.db
+          .select({
+            id: users.id,
+            accountId: accounts.id,
+            sessionId: sessions.id,
+          })
+          .from(users)
+          .leftJoin(sessions, eq(users.id, sessions.userId))
+          .rightJoin(accounts, eq(users.id, accounts.userId))
+          .where(eq(users.id, id))
+          .limit(1)
+          .execute();
 
         if (!result) throw new Error("User not found");
+
+        const { accountId, sessionId } = result;
+        if (accountId) await this.deleteAccount(accountId);
+        if (sessionId) await this.deleteSession(sessionId);
 
         const [deletedUser] = await tx
           .delete(users)
@@ -193,10 +207,31 @@ export class UsersService {
     }
   }
 
+  async userExists({ query, value }: FindOneParams) {
+    const queryResult = await this.parseQuery({ query, value });
+
+    const result = await this.db.query.users.findFirst({
+      columns: { id: true },
+      where: queryResult,
+    });
+
+    return result ? true : false;
+  }
+
+  private async deleteAccount(accountId: string) {
+    await this.db.delete(accounts).where(eq(accounts.id, accountId)).execute();
+  }
+
+  private async deleteSession(sessionId: string) {
+    await this.db.delete(sessions).where(eq(sessions.id, sessionId)).execute();
+  }
+
   private async parseQuery({ query, value }: FindOneParams) {
     const result =
       query === "email"
         ? and(eq(users.email, value), isNull(users.deletedAt))
+        : query === "username"
+        ? and(eq(users.username, value), isNull(users.deletedAt))
         : and(eq(users.id, value), isNull(users.deletedAt));
 
     return result;

@@ -1,19 +1,23 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Inject,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from "@nestjs/common";
 import { UsersService, type CreateUserDto } from "@/modules/users";
 import { ROUTES } from "@/utils/constants";
-import { AuthService } from "./services";
-import { LocalGuard, RtGuard } from "./guards";
+import { AuthService } from "../services";
+import { GoogleOAuthGuard, LocalGuard, RtGuard } from "../guards";
 import { Public, User, UserId } from "@/utils/decorators";
 import { RefreshToken } from "@/utils";
+
+import type { Request } from "express";
 
 @Controller(ROUTES.AUTH)
 export class AuthController {

@@ -8,3 +8,15 @@ declare namespace NodeJS {
     PG_PASSWORD: string;
   }
 }
+
+declare global {
+  namespace Express {
+    export interface GoogleUser {
+      provider: "google";
+      providerId: string;
+      email: string;
+      name: string;
+      picture: string;
+    }
+  }
+}

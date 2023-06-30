@@ -9,11 +9,14 @@ import {
   getDrizzleInstanceToken,
 } from "./drizzle.constants";
 import { Database, DrizzleConfig } from "./drizzle.types";
+import { ScheduleModule } from "@nestjs/schedule";
+import { DrizzleService } from "./drizzle.service";
 
 @Global()
 @Module({
-  imports: [],
+  imports: [ScheduleModule.forRoot()],
   providers: [
+    DrizzleService,
     {
       provide: getDrizzleConfigToken(),
       inject: [ConfigService],

@@ -31,11 +31,7 @@ export class AuthService {
   async login(userId: string) {
     const isValidSession = await this.sessionsService.validateSession(userId);
 
-    console.log("isValidSession", isValidSession);
-
     const { at, rt } = await this.generateTokens(userId);
-
-    console.log([at, rt]);
 
     const session = isValidSession
       ? await this.sessionsService.updateSession(userId, {

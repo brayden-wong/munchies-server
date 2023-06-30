@@ -4,10 +4,17 @@ import { JwtModule } from "@nestjs/jwt";
 
 import { SessionsModule } from "@/modules/sessions";
 import { UsersModule } from "@/modules/users";
-import { AuthController } from "./auth.controller";
-import { AtStrategy, AuthService, LocalStrategy, RtStrategy } from "./services";
+import { AuthController, GoogleController } from "./controllers";
+import {
+  AtStrategy,
+  AuthService,
+  GoogleOAuthStrategy,
+  GoogleService,
+  LocalStrategy,
+  RtStrategy,
+} from "./services";
 import { UtilsModule } from "@/modules/utils";
-import { AtGuard, LocalGuard, RtGuard } from "./guards";
+import { AtGuard, GoogleOAuthGuard, LocalGuard, RtGuard } from "./guards";
 
 @Module({
   imports: [
@@ -17,13 +24,16 @@ import { AtGuard, LocalGuard, RtGuard } from "./guards";
     UsersModule,
     UtilsModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleController],
   providers: [
     AuthService,
+    GoogleService,
     LocalStrategy,
     LocalGuard,
     AtStrategy,
     AtGuard,
+    GoogleOAuthStrategy,
+    GoogleOAuthGuard,
     RtStrategy,
     RtGuard,
   ],

@@ -6,6 +6,6 @@ export type UpdateUserDto = Partial<InferModel<typeof users, "select">>;
 export type User = InferModel<typeof users, "select">;
 
 export type FindOneParams = {
-  query: "email" | "id";
+  query: "email" | "id" | "username";
   value: string;
 };

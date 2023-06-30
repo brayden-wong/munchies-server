@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1688006346776,
-      "tag": "0000_uneven_zemo",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1688006384607,
-      "tag": "0001_worried_killer_shrike",
+      "when": 1688087523379,
+      "tag": "0000_left_post",
       "breakpoints": true
     }
   ]

@@ -93,8 +93,10 @@ export class UsersController {
     };
   }
 
-  @Delete()
-  async deleteUser(@UserId() id: string) {
+  @Public()
+  @Delete(":id")
+  // async deleteUser(@UserId() id: string) {
+  async deleteUser(@Param("id") id: string) {
     const result = await this.usersService.deleteUser(id);
 
     if (!result)

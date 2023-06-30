@@ -35,7 +35,7 @@ export class SessionsService {
       where: eq(sessions.userId, userId),
     });
 
-    if (session.expiration < new Date()) return false;
+    if (session && session.expiration < new Date()) return false;
 
     return session ? true : false;
   }
@@ -107,6 +107,6 @@ export class SessionsService {
   }
 
   private async generateExpiration() {
-    return new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+    return new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
   }
 }
