@@ -15,9 +15,8 @@ export class GeneratorService {
   constructor() {
     this.usernameConfig = {
       dictionaries: [adjectives, nouns],
-      style: "lowerCase",
-      randomDigits: 2,
-      length: 16,
+      randomDigits: 3,
+      length: 32,
     };
   }
 

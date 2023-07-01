@@ -19,7 +19,6 @@ export class UsersController {
 
   @Get()
   async getUser(@UserId() id: string) {
-    console.log(id);
     const result = await this.usersService.getUser({ query: "id", value: id });
 
     if (!result)

@@ -16,16 +16,19 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
-    const { email, ...userDetails } = createUserDto;
-
     try {
       const user = await this.db.transaction(async (tx) => {
-        const lowerCaseEmail = email.toLowerCase();
+        if (createUserDto.email)
+          createUserDto.email = createUserDto.email.toLowerCase();
 
         const [existingUser] = await tx
           .select()
           .from(users)
-          .where(eq(users.email, lowerCaseEmail))
+          .where(
+            createUserDto.email
+              ? eq(users.email, createUserDto.email.toLowerCase())
+              : eq(users.username, createUserDto.username),
+          )
           .limit(1)
           .execute();
 
@@ -34,23 +37,20 @@ export class UsersService {
         }
 
         const id = cuid();
-        if (userDetails.password)
-          userDetails.password = await this.hashService.hash(
-            userDetails.password,
+        if (createUserDto.password)
+          createUserDto.password = await this.hashService.hash(
+            createUserDto.password,
           );
 
         const [result] = await tx
           .insert(users)
           .values({
             id,
-            ...userDetails,
-            email: lowerCaseEmail,
+            ...createUserDto,
           })
           .returning();
 
-        const { password: returningPassword, ...user } = result;
-
-        return user;
+        return result;
       });
 
       return user;
@@ -215,7 +215,7 @@ export class UsersService {
       where: queryResult,
     });
 
-    return result ? true : false;
+    return result && { exists: result ? true : false, id: result?.id ?? null };
   }
 
   private async deleteAccount(accountId: string) {

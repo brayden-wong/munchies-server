@@ -12,7 +12,5 @@ export class DrizzleService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async reconnectDb() {
     const result = await this.db.select().from(users).where(eq(users.id, ""));
-
-    console.log("result", result);
   }
 }

@@ -2,14 +2,19 @@ import { Database, InjectDrizzle } from "@/modules/drizzle";
 import { SessionsService } from "@/modules/sessions";
 import { UsersService } from "@/modules/users";
 import { GeneratorService } from "@/modules/utils";
-import { GoogleProfile, GoogleUser, cuid } from "@/utils";
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import { cuid } from "@/utils/functions";
+import { Inject, Injectable } from "@nestjs/common";
+import { AuthService } from "../../auth/services/auth.service";
 import { accounts } from "@/modules/drizzle/schemas/accounts";
+
+import type { CreateProfileReturnType, GoogleUser } from "./google.types";
+import { AccountsService } from "@/modules/accounts";
 
 @Injectable()
 export class GoogleService {
   constructor(
+    @Inject(AccountsService)
+    private readonly accountsService: AccountsService,
     @Inject(AuthService)
     private readonly authService: AuthService,
     @Inject(GeneratorService)
@@ -18,17 +23,21 @@ export class GoogleService {
     private readonly sessionsService: SessionsService,
     @Inject(UsersService)
     private readonly usersService: UsersService,
-    @InjectDrizzle() private readonly db: Database,
   ) {}
 
-  async createProfile(profile: GoogleUser) {
-    const userExists = await this.usersService.userExists({
+  async createProfile(profile: GoogleUser): Promise<CreateProfileReturnType> {
+    const { exists, id: existingUserId } = await this.usersService.userExists({
       query: "email",
       value: profile.email,
     });
 
-    if (userExists)
-      throw new HttpException("User already exists", HttpStatus.CONFLICT);
+    console.table([exists, existingUserId]);
+
+    if (exists) {
+      const { at, rt, session } = await this.authService.login(existingUserId);
+
+      return { user: null, account: null, auth: { at, rt, session } };
+    }
 
     const userId = cuid();
     const accountId = cuid();
@@ -47,16 +56,20 @@ export class GoogleService {
 
     const session = await this.authService.login(user.id);
 
-    const [account] = await this.db
-      .insert(accounts)
-      .values({
-        id: accountId,
-        provider,
-        providerId,
-        userId,
-      })
-      .returning();
+    const account = await this.accountsService.createAccount({
+      id: accountId,
+      provider,
+      providerId,
+      userId,
+    });
 
-    return { user: newUser, session, account };
+    const userAccountId = await this.accountsService.linkAccount(
+      newUser.id,
+      accountId,
+    );
+
+    newUser.accountId = userAccountId;
+
+    return { account, auth: session, user: newUser };
   }
 }

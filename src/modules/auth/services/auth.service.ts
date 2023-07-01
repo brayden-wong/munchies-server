@@ -1,9 +1,11 @@
 import { Session, SessionsService } from "@/modules/sessions";
 import { CreateUserDto, User, UsersService } from "@/modules/users";
-import { HashService, UtilsModule } from "@/modules/utils";
+import { HashService } from "@/modules/utils";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+
+import { isValidEmail } from "@/utils/functions";
 
 @Injectable()
 export class AuthService {
@@ -15,11 +17,12 @@ export class AuthService {
     @Inject(UsersService) private readonly usersService: UsersService,
   ) {}
 
-  async validateUser(email: string, pass: string) {
-    const user = await this.usersService.getUser({
-      query: "email",
-      value: email,
-    });
+  async validateUser(username: string, pass: string) {
+    const isValid = isValidEmail(username);
+
+    const user = isValid
+      ? await this.usersService.getUser({ query: "email", value: username })
+      : await this.usersService.getUser({ query: "username", value: username });
 
     if (!user) return null;
 

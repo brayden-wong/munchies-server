@@ -14,12 +14,13 @@ export const users = pgTable(
   {
     id: varchar("id", { length: 36 }).primaryKey(),
     name: varchar("name", { length: 60 }).notNull(),
-    username: varchar("username", { length: 16 }).notNull(),
-    email: varchar("email", { length: 60 }).notNull(),
+    username: varchar("username", { length: 32 }).notNull(),
+    email: varchar("email", { length: 60 }),
     password: varchar("password", { length: 255 }),
 
     deactivate: boolean("deactivated").notNull().default(false),
 
+    accountId: varchar("accountId", { length: 36 }),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     deletedAt: timestamp("deletedAt").default(null),
@@ -33,11 +34,11 @@ export const users = pgTable(
 );
 
 export const userRelations = relations(users, ({ one }) => ({
-  session: one(sessions, {
+  sessionsUserId: one(sessions, {
     fields: [users.id],
     references: [sessions.userId],
   }),
-  account: one(accounts, {
+  accountsUserId: one(accounts, {
     fields: [users.id],
     references: [accounts.userId],
   }),

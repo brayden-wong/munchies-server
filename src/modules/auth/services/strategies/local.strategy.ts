@@ -10,13 +10,11 @@ export class LocalStrategy extends PassportStrategy(
   STRATEGIES.LOCAL,
 ) {
   constructor(@Inject(AuthService) private readonly authService: AuthService) {
-    super({
-      usernameField: "email",
-    });
+    super({});
   }
 
-  async validate(email: string, pass: string) {
-    const user = await this.authService.validateUser(email, pass);
+  async validate(username: string, pass: string) {
+    const user = await this.authService.validateUser(username, pass);
 
     if (!user)
       throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);

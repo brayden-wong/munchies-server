@@ -19,8 +19,6 @@ export class RtStrategy extends PassportStrategy(Strategy, STRATEGIES.RT) {
   async validate(req: Request, payload: Token) {
     const rt = req.headers.authorization.split(" ")[1];
 
-    console.log(payload);
-
     return {
       ...payload,
       rt,

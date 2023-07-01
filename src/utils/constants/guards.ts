@@ -3,4 +3,5 @@ export const GUARDS = {
   AT: "at-strategy",
   RT: "rt-strategy",
   GOOGLE: "google-strategy",
+  FACEBOOK: "facebook-strategy",
 } as const;
