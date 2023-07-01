@@ -4,6 +4,7 @@ import { Controller, Get, UseGuards } from "@nestjs/common";
 import { FacebookOAuthGuard } from "./facebook.oauth.guard";
 import { Profile } from "passport-facebook";
 import { FacebookService } from "./facebook.service";
+import { FacebookUser } from "./facebook.types";
 
 @Controller(ROUTES.FACEBOOK)
 export class FacebookController {
@@ -17,7 +18,7 @@ export class FacebookController {
   @Public()
   @Get("redirect")
   @UseGuards(FacebookOAuthGuard)
-  async callback(@User() user: Express.FacebookUser) {
+  async callback(@User() user: FacebookUser) {
     const result = await this.facebookService.createProfile(user);
 
     return {
