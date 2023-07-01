@@ -15,7 +15,8 @@
     "push": "drizzle-kit push:pg --config=drizzle.config.ts",
     "drop": "drizzle-kit drop --out=.drizzle",
     "generate": "drizzle-kit generate:pg --config=drizzle.config.ts",
-    "migrate": "cross-env NODE_ENV=development ts-node ./migration.ts"
+    "migrate": "cross-env NODE_ENV=development ts-node ./migration.ts",
+    "docker": "docker compose up -d --build"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -25,7 +25,7 @@ export class FacebookOAuthStrategy extends PassportStrategy(
     profile: Profile,
     done: (err: any, user: FacebookUser, info?: any) => void,
   ) {
-    const user: Express.FacebookUser = {
+    const user: FacebookUser = {
       name: `${profile.name.givenName} ${profile.name.familyName}`,
       picture: profile.photos[0].value,
       provider: "facebook",

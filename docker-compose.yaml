@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  munchies:
+    build:
+      context: .
+      target: development
+      dockerfile: ./dockerfile
+    ports:
+      - 8080:8080
+    command: >
+      sh -c "npm run start:dev"
+    networks:
+      - munchies-network
+    env_file: .env.development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  # prod:
+  #   build:
+  #     context: .
+  #     target: production
+  #     dockerfile: ./dockerfile
+  #   command: npm run start:prod
+  #   networks:
+  #     - munchies-network
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   env_file: .env.production
+  #   restart: unless-stopped
+
+networks:
+  munchies-network:
+    external: false
