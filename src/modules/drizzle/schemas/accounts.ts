@@ -8,7 +8,7 @@ import {
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 
-export const providers = pgEnum("provider", ["google", "facebook", "twitter"]);
+export const providers = pgEnum("provider", ["google", "facebook", "discord"]);
 
 export const accounts = pgTable(
   "accounts",
