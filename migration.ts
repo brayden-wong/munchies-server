@@ -6,6 +6,8 @@ dotenv.config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
+console.log(process.env.NODE_ENV);
+
 import { Client } from "pg";
 
 const main = async () => {
@@ -15,11 +17,23 @@ const main = async () => {
     database: process.env.PG_DATABASE,
     user: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
   };
 
+  const connectionString = `postgres://${config.user}:${config.password}@${
+    config.host
+  }${process.env.NODE_ENV === "docker" ? `:${config.port}` : ""}/${
+    config.database
+  }`;
+
   const client = new Client({
-    connectionString: `postgres://${config.user}:${config.password}@${config.host}/${config.database}`,
-    ssl: true,
+    connectionString,
+    ssl:
+      process.env.NODE_ENV === "production"
+        ? true
+        : process.env.NODE_ENV === "development"
+        ? true
+        : false,
   });
 
   await client.connect();
