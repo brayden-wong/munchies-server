@@ -57,13 +57,6 @@ export class DiscordService {
       providerId: profile.providerId,
     });
 
-    const accountId = await this.accountsService.linkAccount(
-      user.id,
-      account.id,
-    );
-
-    user.accountId = accountId;
-
     return { account, auth: session, user };
   }
 }

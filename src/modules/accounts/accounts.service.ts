@@ -42,18 +42,6 @@ export class AccountsService {
       : { exists: false, id: null };
   }
 
-  async linkAccount(userId: string, accountId: string) {
-    const [{ accountId: id }] = await this.db
-      .update(users)
-      .set({
-        accountId,
-      })
-      .where(eq(users.id, userId))
-      .returning({ accountId: users.accountId });
-
-    return id;
-  }
-
   private async parseQuery({ query, value }: AccountExistsParams) {
     return query === "providerId"
       ? eq(accounts.providerId, value)

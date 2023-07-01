@@ -58,13 +58,6 @@ export class FacebookService {
       userId,
     });
 
-    const userAccountId = await this.accountsService.linkAccount(
-      newUser.id,
-      accountId,
-    );
-
-    newUser.accountId = userAccountId;
-
     return { account, auth: session, user: newUser };
   }
 }
