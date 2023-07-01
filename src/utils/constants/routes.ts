@@ -1,6 +1,7 @@
 export const ROUTES = {
   AUTH: "auth",
-  USERS: "users",
-  GOOGLE: "auth/google",
+  DISCORD: "auth/discord",
   FACEBOOK: "auth/facebook",
+  GOOGLE: "auth/google",
+  USERS: "users",
 } as const;

@@ -3,9 +3,8 @@ import { SessionsService } from "@/modules/sessions";
 import { UsersService } from "@/modules/users";
 import { GeneratorService } from "@/modules/utils";
 import { cuid } from "@/utils/functions";
-import { Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { AuthService } from "../../auth/services/auth.service";
-import { accounts } from "@/modules/drizzle/schemas/accounts";
 
 import type { CreateProfileReturnType, GoogleUser } from "./google.types";
 import { AccountsService } from "@/modules/accounts";
@@ -19,8 +18,6 @@ export class GoogleService {
     private readonly authService: AuthService,
     @Inject(GeneratorService)
     private readonly generatorService: GeneratorService,
-    @Inject(SessionsService)
-    private readonly sessionsService: SessionsService,
     @Inject(UsersService)
     private readonly usersService: UsersService,
   ) {}
@@ -31,9 +28,17 @@ export class GoogleService {
       value: profile.email,
     });
 
-    console.table([exists, existingUserId]);
-
     if (exists) {
+      const existingAccount = await this.accountsService.getAccount({
+        query: "userId",
+        value: existingUserId,
+      });
+
+      if (existingAccount.provider !== "google")
+        throw new HttpException(
+          "Email is already associated with another account",
+          HttpStatus.CONFLICT,
+        );
       const { at, rt, session } = await this.authService.login(existingUserId);
 
       return { user: null, account: null, auth: { at, rt, session } };

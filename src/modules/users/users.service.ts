@@ -5,7 +5,7 @@ import { CreateUserDto, FindOneParams, UpdateUserDto } from "./users.types";
 
 import type { Database } from "@/modules/drizzle";
 import { HashService } from "../utils";
-import { and, eq, isNull, like } from "drizzle-orm";
+import { and, asc, eq, isNull, like } from "drizzle-orm";
 import { cuid } from "@/utils";
 
 @Injectable()
@@ -68,13 +68,18 @@ export class UsersService {
       .select()
       .from(users)
       .where(queryResult)
+      .orderBy(asc(users.username))
       .execute();
 
     return result;
   }
 
   async getUsers() {
-    return await this.db.select().from(users);
+    return await this.db
+      .select()
+      .from(users)
+      .orderBy(asc(users.username))
+      .execute();
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
@@ -215,7 +220,9 @@ export class UsersService {
       where: queryResult,
     });
 
-    return result && { exists: result ? true : false, id: result?.id ?? null };
+    return result
+      ? { exists: true, id: result.id }
+      : { exists: false, id: null };
   }
 
   private async deleteAccount(accountId: string) {

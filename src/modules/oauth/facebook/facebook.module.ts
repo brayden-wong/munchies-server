@@ -6,19 +6,12 @@ import { FacebookService } from "./facebook.service";
 import {
   AccountsModule,
   AuthModule,
-  SessionsModule,
   UsersModule,
   UtilsModule,
 } from "@/modules";
 
 @Module({
-  imports: [
-    AccountsModule,
-    AuthModule,
-    SessionsModule,
-    UsersModule,
-    UtilsModule,
-  ],
+  imports: [AccountsModule, AuthModule, UsersModule, UtilsModule],
   controllers: [FacebookController],
   providers: [FacebookService, FacebookOAuthGuard, FacebookOAuthStrategy],
 })

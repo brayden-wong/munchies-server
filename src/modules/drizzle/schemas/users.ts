@@ -13,7 +13,7 @@ export const users = pgTable(
   "users",
   {
     id: varchar("id", { length: 36 }).primaryKey(),
-    name: varchar("name", { length: 60 }).notNull(),
+    name: varchar("name", { length: 60 }),
     username: varchar("username", { length: 32 }).notNull(),
     email: varchar("email", { length: 60 }),
     password: varchar("password", { length: 255 }),

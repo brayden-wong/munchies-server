@@ -1,11 +1,12 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
-    NODE_ENV: "development" | "production";
+    NODE_ENV: "development" | "production" | "docker";
     PORT: string;
     PG_HOST: string;
     PG_DATABASE: string;
     PG_USER: string;
     PG_PASSWORD: string;
+    PG_PORT: number;
   }
 }
 

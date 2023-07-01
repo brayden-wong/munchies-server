@@ -25,6 +25,7 @@ import { DrizzleService } from "./drizzle.service";
           return {
             host: config.get<string>("PG_HOST"),
             database: config.get<string>("PG_DATABASE"),
+            port: config.get<number>("PG_PORT"),
             user: config.get<string>("PG_USER"),
             password: config.get<string>("PG_PASSWORD"),
           };
@@ -41,10 +42,20 @@ import { DrizzleService } from "./drizzle.service";
         host,
         password,
         user,
+        ...config
       }: DrizzleConfig): Promise<Database> => {
+        const connectionString = `postgres://${user}:${password}@${host}${
+          process.env.NODE_ENV === "docker" ? `:${config.port}` : ""
+        }/${database}`;
+
         const client = new Client({
-          connectionString: `postgres://${user}:${password}@${host}/${database}`,
-          ssl: true,
+          connectionString,
+          ssl:
+            process.env.NODE_ENV === "production"
+              ? true
+              : process.env.NODE_ENV === "development"
+              ? true
+              : false,
         });
 
         await client.connect();

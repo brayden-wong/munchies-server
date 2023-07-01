@@ -19,6 +19,16 @@ export class AccountsService {
     return account;
   }
 
+  async getAccount({ query, value }: AccountExistsParams) {
+    const queryResult = await this.parseQuery({ query, value });
+
+    const account = await this.db.query.accounts.findFirst({
+      where: queryResult,
+    });
+
+    return account;
+  }
+
   async accountExists({ query, value }: AccountExistsParams) {
     const queryResult = await this.parseQuery({ query, value });
 

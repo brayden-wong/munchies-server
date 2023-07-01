@@ -1,4 +1,4 @@
-import { InferModel } from "drizzle-orm";
+import { InferModel, SQL } from "drizzle-orm";
 import { users } from "@/modules/drizzle";
 
 export type CreateUserDto = InferModel<typeof users, "insert">;

@@ -18,8 +18,6 @@ export class FacebookService {
     private readonly authService: AuthService,
     @Inject(GeneratorService)
     private readonly generatorService: GeneratorService,
-    @Inject(SessionsService)
-    private readonly sessionService: SessionsService,
     @Inject(UsersService)
     private readonly usersService: UsersService,
   ) {}

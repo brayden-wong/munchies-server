@@ -1,6 +1,20 @@
 version: "3.8"
 
 services:
+  # postgres:
+  #   container_name: postgres
+  #   image: postgres
+  #   networks:
+  #     - munchies-network
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: root
+  #     POSTGRES_DB: munchies
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+
   munchies:
     build:
       context: .
@@ -8,8 +22,10 @@ services:
       dockerfile: ./dockerfile
     ports:
       - 8080:8080
+    environment:
+      - NODE_ENV=development
     command: >
-      sh -c "npm run start:dev"
+      sh -c "npm run build && npm run start:dev"
     networks:
       - munchies-network
     env_file: .env.development
@@ -34,4 +50,8 @@ services:
 
 networks:
   munchies-network:
+    external: false
+
+volumes:
+  db:
     external: false

@@ -1,19 +1,17 @@
-import { AccountsModule } from "@/modules/accounts";
-import { AuthModule } from "@/modules/auth";
-import { SessionsModule } from "@/modules/sessions";
-import { UsersModule } from "@/modules/users";
-import { UtilsModule } from "@/modules/utils";
+import {
+  AccountsModule,
+  AuthModule,
+  UsersModule,
+  UtilsModule,
+} from "@/modules";
 import { Module } from "@nestjs/common";
+import { DiscordController } from "./discord.controller";
+import { DiscordOAuthStrategy } from "./discord.oauth.strategy";
+import { DiscordService } from "./discord.service";
 
 @Module({
-  imports: [
-    AccountsModule,
-    AuthModule,
-    SessionsModule,
-    UsersModule,
-    UtilsModule,
-  ],
-  controllers: [],
-  providers: [],
+  imports: [AccountsModule, AuthModule, UsersModule, UtilsModule],
+  controllers: [DiscordController],
+  providers: [DiscordService, DiscordOAuthStrategy, DiscordOAuthStrategy],
 })
 export class DiscordModule {}

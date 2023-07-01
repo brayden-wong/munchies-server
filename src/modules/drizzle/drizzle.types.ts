@@ -5,6 +5,7 @@ export type DrizzleConfig = {
   host: string;
   database: string;
   user: string;
+  port: number;
   password: string;
 };
 

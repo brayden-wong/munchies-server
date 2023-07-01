@@ -5,7 +5,6 @@ import { GoogleService } from "./google.service";
 import {
   AccountsModule,
   AuthModule,
-  SessionsModule,
   UsersModule,
   UtilsModule,
 } from "@/modules";
@@ -13,13 +12,7 @@ import { GoogleOAuthStrategy } from "./google.oauth.strategy";
 import { GoogleOAuthGuard } from "./google.oauth.guard";
 
 @Module({
-  imports: [
-    AccountsModule,
-    AuthModule,
-    SessionsModule,
-    UsersModule,
-    UtilsModule,
-  ],
+  imports: [AccountsModule, AuthModule, UsersModule, UtilsModule],
   controllers: [GoogleController],
   providers: [GoogleService, GoogleOAuthStrategy, GoogleOAuthGuard],
 })
