@@ -20,7 +20,7 @@ export const accounts = pgTable(
 
     userId: varchar("userId", { length: 36 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     createdAt: timestamp("createdAt").defaultNow(),
     updatedAt: timestamp("updatedAt").defaultNow(),
   },
@@ -29,10 +29,3 @@ export const accounts = pgTable(
     providerId: uniqueIndex("providerIdIndex").on(table.providerId),
   }),
 );
-
-export const accountRelations = relations(accounts, ({ one }) => ({
-  user: one(users, {
-    fields: [accounts.userId],
-    references: [users.id],
-  }),
-}));
