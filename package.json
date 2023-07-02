@@ -9,14 +9,15 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "NODE_ENV=development nest start --watch",
+    "start:dev": "nest start --watch",
     "start:debug": "cross-env NODE_ENV=production dist/main",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "push": "drizzle-kit push:pg --config=drizzle.config.ts",
     "drop": "drizzle-kit drop --out=.drizzle",
-    "generate": "drizzle-kit generate:pg --config=drizzle.config.ts",
-    "migrate": "cross-env NODE_ENV=development ts-node ./migration.ts",
-    "docker": "docker compose up -d --build"
+    "generate": "cross-env NODE_ENV=development drizzle-kit generate:pg --config=drizzle.config.ts",
+    "migrate": "cross-env ts-node ./migration.ts",
+    "docker": "docker compose up -d --build",
+    "test": "ts-node ./test.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

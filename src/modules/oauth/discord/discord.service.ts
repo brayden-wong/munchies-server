@@ -31,7 +31,7 @@ export class DiscordService {
         value: existingUserId,
       });
 
-      if (existingAccount.provider === "discord")
+      if (existingAccount.provider !== "discord")
         throw new HttpException(
           "Email is already associated with another account",
           HttpStatus.CONFLICT,
@@ -56,13 +56,6 @@ export class DiscordService {
       provider: profile.provider,
       providerId: profile.providerId,
     });
-
-    const accountId = await this.accountsService.linkAccount(
-      user.id,
-      account.id,
-    );
-
-    user.accountId = accountId;
 
     return { account, auth: session, user };
   }

@@ -17,10 +17,16 @@ export class GeneratorService {
       dictionaries: [adjectives, nouns],
       randomDigits: 3,
       length: 32,
+      separator: " ",
     };
   }
 
   async generateUsername() {
-    return uniqueUsernameGenerator(this.usernameConfig);
+    const username = uniqueUsernameGenerator(this.usernameConfig)
+      .split(" ")
+      .map((str) => str[0].toUpperCase() + str.slice(1))
+      .join("");
+
+    return username;
   }
 }
