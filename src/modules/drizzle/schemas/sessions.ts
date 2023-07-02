@@ -9,7 +9,7 @@ export const sessions = pgTable(
     expiration: timestamp("expiration").notNull(),
     userId: varchar("userId", { length: 36 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (table) => {
     return {

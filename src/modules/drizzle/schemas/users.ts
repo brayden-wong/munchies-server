@@ -34,13 +34,13 @@ export const users = pgTable(
 );
 
 export const userRelations = relations(users, ({ many, one }) => ({
-  usersToRecipes: many(usersToRecipes),
-  sessionInfo: one(sessions, {
-    fields: [users.id],
-    references: [sessions.userId],
-  }),
-  accountsInfo: one(accounts, {
+  accounts: one(accounts, {
     fields: [users.id],
     references: [accounts.userId],
+  }),
+  usersToRecipes: many(usersToRecipes),
+  sessions: one(sessions, {
+    fields: [users.id],
+    references: [sessions.userId],
   }),
 }));

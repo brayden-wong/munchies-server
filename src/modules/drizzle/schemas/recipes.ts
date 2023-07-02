@@ -1,43 +1,34 @@
+import { json, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  index,
-  json,
-  pgTable,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { usersToRecipes } from "./usersToRecipes";
 
-export type Measurements = ["tsb", "tbsp", "cup", "oz"];
+export type Ingredient = {
+  ingrendientId: number;
+  name: string;
+  quantity: number;
+};
+export type Measurements = "tsp" | "tbsp" | "cup" | "oz" | "g" | "mg" | "ml";
+export type Steps = Array<{
+  stepId: number;
+  description: string;
+  duration?: number;
+  ingredients?: Array<{
+    ingredient: Ingredient;
+    measurement: Measurements;
+  }>;
+}>;
 
-export const recipes = pgTable(
-  "recipes",
-  {
-    id: varchar("id", { length: 36 }).primaryKey(),
-    name: varchar("recipeName", { length: 60 }).notNull(),
-    steps: json("steps")
-      .$type<
-        Array<{
-          description: string;
-          ingriedient: string;
-          amount: number;
-          measurement: Measurements;
-        }>
-      >()
-      .notNull(),
+export const recipes = pgTable("recipes", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  name: varchar("name", { length: 60 }).notNull(),
+  description: text("description").notNull(),
+  ingredients: json("ingredients").$type<Array<Ingredient>>().notNull(),
+  steps: json("steps").$type<Steps>().notNull(),
 
-    public: boolean("public").notNull().default(false),
-    userId: varchar("userId", { length: 36 }).notNull(),
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
-    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
-  },
-  (table) => ({
-    nameIndex: index("nameIndex").on(table.name).asc(),
-  }),
-);
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
 
-export const recipesRelations = relations(recipes, ({ many }) => ({
+export const recipeRelations = relations(recipes, ({ many }) => ({
   usersToRecipes: many(usersToRecipes),
 }));
