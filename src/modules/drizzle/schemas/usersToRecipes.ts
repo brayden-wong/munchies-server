@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, varchar } from "drizzle-orm/pg-core";
+import { index, pgTable, primaryKey, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { recipes } from "./recipes";
 
@@ -15,6 +15,7 @@ export const usersToRecipes = pgTable(
   },
   (table) => ({
     pk: primaryKey(table.userId, table.recipeId),
+    indexes: index("idIndex").on(table.userId, table.recipeId),
   }),
 );
 

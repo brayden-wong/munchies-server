@@ -1,22 +1,7 @@
 import { json, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { usersToRecipes } from "./usersToRecipes";
-
-export type Ingredient = {
-  ingrendientId: number;
-  name: string;
-  quantity: number;
-};
-export type Measurements = "tsp" | "tbsp" | "cup" | "oz" | "g" | "mg" | "ml";
-export type Steps = Array<{
-  stepId: number;
-  description: string;
-  duration?: number;
-  ingredients?: Array<{
-    ingredient: Ingredient;
-    measurement: Measurements;
-  }>;
-}>;
+import { Ingredient, Steps } from "@/modules/recipes";
 
 export const recipes = pgTable("recipes", {
   id: varchar("id", { length: 36 }).primaryKey(),

@@ -1,17 +1,14 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import * as dotenv from "dotenv";
+import { Client } from "pg";
 
 dotenv.config({
   path: `.env.${process.env.NODE_ENV}`,
 });
 
-console.log(process.env.NODE_ENV);
-
-import { Client } from "pg";
-
 const main = async () => {
-  console.log("running migration...");
+  console.log("running migration...\n");
   const config = {
     host: process.env.PG_HOST,
     database: process.env.PG_DATABASE,

@@ -10,6 +10,7 @@ import {
   OAuthModule,
   UsersModule,
 } from "@/modules";
+import { RecipesModule } from "./modules/recipes";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import {
     }),
     DrizzleModule,
     OAuthModule,
+    RecipesModule,
     UsersModule,
   ],
   controllers: [],
