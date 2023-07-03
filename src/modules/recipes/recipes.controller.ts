@@ -1,8 +1,8 @@
 import { ROUTES } from "@/utils/constants";
-import { UserId } from "@/utils/decorators";
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Public, UserId } from "@/utils/decorators";
+import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
 import { RecipesService } from "./recipes.service";
-import { CreateRecipeDto } from "./recipes.types";
+import { CreateRecipeDto, UpdateRecipeDto } from "./recipes.types";
 
 @Controller(ROUTES.RECIPES)
 export class RecipesController {
@@ -51,6 +51,25 @@ export class RecipesController {
       status: "ok",
       statusCode: 200,
       data: recipes,
+    };
+  }
+
+  @Patch()
+  async updateRecipe(
+    @UserId()
+    userId: string,
+    @Body()
+    updateRecipeDto: UpdateRecipeDto,
+  ) {
+    const updatedRecipe = await this.recipesService.updateRecipe(
+      userId,
+      updateRecipeDto,
+    );
+
+    return {
+      status: "ok",
+      statusCode: 200,
+      data: updatedRecipe,
     };
   }
 }

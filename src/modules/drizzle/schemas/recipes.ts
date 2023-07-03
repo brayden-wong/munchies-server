@@ -8,7 +8,7 @@ export const recipes = pgTable("recipes", {
   name: varchar("name", { length: 60 }).notNull(),
   description: text("description").notNull(),
   ingredients: json("ingredients").$type<Array<Ingredient>>().notNull(),
-  steps: json("steps").$type<Steps>().notNull(),
+  steps: json("steps").$type<Array<Steps>>().notNull(),
 
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt").notNull().defaultNow(),

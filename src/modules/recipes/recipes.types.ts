@@ -3,7 +3,13 @@ import { recipes } from "@/modules/drizzle";
 
 export type CreateRecipeDto = InferModel<typeof recipes, "insert">;
 export type Recipe = InferModel<typeof recipes, "select">;
-export type UpdateRecipeDto = Partial<Recipe>;
+export type UpdateRecipeDto = {
+  id?: string;
+  name?: string;
+  description?: string;
+  ingredients?: Ingredient | Ingredient[];
+  steps?: Steps | Array<Steps>;
+};
 
 export type RecipeWithUserId = {
   id: string;
@@ -11,7 +17,7 @@ export type RecipeWithUserId = {
   name: string;
   description: string;
   ingredients: Ingredient[];
-  steps: Steps;
+  steps: Array<Steps>;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -23,7 +29,7 @@ export type Ingredient = {
 };
 
 export type Measurements = "tsp" | "tbsp" | "cup" | "oz" | "g" | "mg" | "ml";
-export type Steps = Array<{
+export type Steps = {
   stepId: number;
   description: string;
   duration?: number;
@@ -34,17 +40,17 @@ export type Steps = Array<{
       measurement: Measurements;
     };
   }>;
-}>;
+};
 
-export type TransformRecipeArray = Array<{
+export type TransformRecipeParam = {
   userId: string;
   recipes: {
     id: string;
     name: string;
     description: string;
-    ingredients: Ingredient[];
-    steps: Steps;
+    ingredients: Array<Ingredient>;
+    steps: Array<Steps>;
     createdAt: Date;
     updatedAt: Date;
   };
-}>;
+};
