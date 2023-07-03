@@ -50,6 +50,20 @@
       "when": 1688307005025,
       "tag": "0006_productive_madame_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1688358630428,
+      "tag": "0007_wise_guardsmen",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1688358724740,
+      "tag": "0008_opposite_blindfold",
+      "breakpoints": true
     }
   ]
 }

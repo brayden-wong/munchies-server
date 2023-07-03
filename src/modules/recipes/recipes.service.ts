@@ -5,7 +5,7 @@ import {
   recipes,
   usersToRecipes,
 } from "@/modules/drizzle";
-import { and, asc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   CreateRecipeDto,
   RecipeWithUserId,
@@ -23,11 +23,12 @@ export class RecipesService {
       .insert(recipes)
       .values({
         ...createRecipeDto,
+        authorId: userId,
         id: cuid(),
       })
       .returning();
 
-    const linkedUserId = await this.linkRecipeToUser(userId, recipe.id);
+    const linkedUserId = await this.linkRecipeToUser(recipe.id, userId);
 
     return {
       recipe,
@@ -35,11 +36,9 @@ export class RecipesService {
     };
   }
 
-  async getRecipe(recipeId: string, userId: string) {
+  async getLinkedRecipe(recipeId: string, userId: string) {
     const recipe = await this.db.query.usersToRecipes.findFirst({
-      columns: {
-        userId: true,
-      },
+      columns: { userId: true },
       where: and(
         eq(usersToRecipes.userId, userId),
         eq(usersToRecipes.recipeId, recipeId),
@@ -48,21 +47,13 @@ export class RecipesService {
         recipes: true,
       },
     });
-    console.log(recipe);
 
     if (!recipe)
       throw new HttpException("Recipe not found", HttpStatus.NOT_FOUND);
 
-    const {
-      userId: recipeUserId,
-      recipes: { id, ...recipeData },
-    } = recipe;
+    const transformedRecipe = await this.transformRecipe(recipe);
 
-    return {
-      id,
-      userId: recipeUserId,
-      ...recipeData,
-    };
+    return transformedRecipe;
   }
 
   async getRecipes(userId: string) {
@@ -76,7 +67,49 @@ export class RecipesService {
       },
     });
 
-    return await this.transformRecipes(result);
+    return await this.transformRecipe(result);
+  }
+
+  async makeRecipePublic(recipeId: string, userId: string) {
+    const recipe = await this.getLinkedRecipe(recipeId, userId);
+
+    if (recipe.authorId !== userId)
+      throw new HttpException(
+        "You are not authorized to make this recipe public",
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    const [updatedRecipe] = await this.db
+      .update(recipes)
+      .set({
+        public: true,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(recipes.id, recipeId), eq(recipes.authorId, userId)))
+      .returning();
+
+    return updatedRecipe;
+  }
+
+  async makeRecipePrivate(recipeId: string, userId: string) {
+    const recipe = await this.getLinkedRecipe(recipeId, userId);
+
+    if (recipe.authorId !== userId)
+      throw new HttpException(
+        "You are not authorized to make this recipe private",
+        HttpStatus.UNAUTHORIZED,
+      );
+
+    const [updatedRecipe] = await this.db
+      .update(recipes)
+      .set({
+        public: false,
+        updatedAt: new Date(),
+      })
+      .where(and(eq(recipes.id, recipeId), eq(recipes.authorId, userId)))
+      .returning();
+
+    return updatedRecipe;
   }
 
   async updateRecipe(userId: string, updateRecipeDto: UpdateRecipeDto) {
@@ -89,19 +122,20 @@ export class RecipesService {
       if (!resultRecipe)
         throw new HttpException("Recipe not found", HttpStatus.NOT_FOUND);
 
-      const updatedRecipe = await this.updateRecipeValues(
+      const updatedRecipe = await this.transformRecipeValues(
         resultRecipe,
         updateRecipeDto,
       );
-
-      console.log("before update");
 
       const { userId: recipeUserId, recipe: recipeData } =
         await this.extractUserId(updatedRecipe);
 
       const [recipe] = await tx
         .update(recipes)
-        .set(recipeData)
+        .set({
+          ...recipeData,
+          updatedAt: new Date(),
+        })
         .where(eq(recipes.id, updateRecipeDto.id))
         .returning();
 
@@ -117,26 +151,54 @@ export class RecipesService {
     return result;
   }
 
-  private async getLinkedRecipe(userId: string, recipeId: string) {
-    const recipe = await this.db.query.usersToRecipes.findFirst({
-      columns: { userId: true },
-      where: and(
-        eq(usersToRecipes.userId, userId),
-        eq(usersToRecipes.recipeId, recipeId),
-      ),
-      with: {
-        recipes: true,
-      },
+  async deleteRecipe(recipeId: string, userId: string) {
+    const result = await this.db.transaction(async (tx) => {
+      const resultRecipe = await this.getLinkedRecipe(recipeId, userId);
+
+      if (!resultRecipe)
+        throw new HttpException("Recipe not found", HttpStatus.NOT_FOUND);
+
+      if (resultRecipe.authorId !== userId)
+        throw new HttpException(
+          "You are not authorized to delete this recipe",
+          HttpStatus.UNAUTHORIZED,
+        );
+
+      const [recipe] = await tx
+        .delete(recipes)
+        .where(eq(recipes.id, recipeId))
+        .returning();
+
+      return recipe;
     });
 
-    if (!recipe) return null;
-
-    const transformedRecipe = await this.transformRecipes(recipe);
-
-    return transformedRecipe;
+    return result;
   }
 
-  private async linkRecipeToUser(userId: string, recipeId: string) {
+  async saveRecipe(recipeId: string, userId: string) {
+    const recipe = await this.linkRecipeToUser(recipeId, userId);
+
+    return recipe;
+  }
+
+  async unlinkRecipe(recipeId: string, userId: string) {
+    const [recipe] = await this.db
+      .delete(usersToRecipes)
+      .where(
+        and(
+          eq(usersToRecipes.recipeId, recipeId),
+          eq(usersToRecipes.userId, userId),
+        ),
+      )
+      .returning();
+
+    return {
+      recipeId: recipe.recipeId,
+      userId: recipe.userId,
+    };
+  }
+
+  private async linkRecipeToUser(recipeId: string, userId: string) {
     try {
       const linkedUserId = await this.db.transaction(async (tx) => {
         const linkExists = await tx.query.usersToRecipes.findFirst({
@@ -167,7 +229,7 @@ export class RecipesService {
     }
   }
 
-  private async updateRecipeValues(
+  private async transformRecipeValues(
     currentRecipe: RecipeWithUserId,
     updateRecipeDto: UpdateRecipeDto,
   ) {
@@ -184,8 +246,7 @@ export class RecipesService {
 
         if (!Array.isArray(ingredients)) {
           const newIngredients = currentRecipe.ingredients.map((ingredient) => {
-            if (ingredient.ingrendientId !== ingredients.ingrendientId)
-              return ingredient;
+            if (ingredient.id !== ingredients.id) return ingredient;
 
             return ingredients;
           });
@@ -197,21 +258,28 @@ export class RecipesService {
         for (let i = 0; i < ingredients.length; i++) {
           const ingredient = ingredients[i];
 
-          if (ingredient.ingrendientId !== ingredients[i].ingrendientId)
-            continue;
+          const index = currentRecipe.ingredients.findIndex(
+            (ingredient) => ingredient.id === ingredient.id,
+          );
 
-          currentRecipe.ingredients[i] = ingredient;
+          if (index === -1) {
+            currentRecipe.ingredients.push(ingredient);
+            continue;
+          }
+
+          currentRecipe.ingredients[index] = ingredient;
+          continue;
         }
       }
 
       if (key === "steps") {
-        const { steps: newSteps } = updateRecipeDto;
+        const { steps: currentStep } = updateRecipeDto;
 
-        if (!newSteps) continue;
+        if (!currentStep) continue;
 
-        if (!Array.isArray(newSteps)) {
+        if (!Array.isArray(currentStep)) {
           const newSteps = currentRecipe.steps.map((step) => {
-            if (step.stepId !== newSteps.stepId) return step;
+            if (step.id !== currentStep.id) return step;
 
             return newSteps;
           });
@@ -220,12 +288,20 @@ export class RecipesService {
           continue;
         }
 
-        for (let i = 0; i < newSteps.length; i++) {
-          const step = newSteps[i];
+        for (let i = 0; i < currentStep.length; i++) {
+          const step = currentStep[i];
 
-          if (step.stepId !== newSteps[i].stepId) continue;
+          const index = currentRecipe.steps.findIndex(
+            (currentStep) => step.id === currentStep.id,
+          );
 
-          currentRecipe.steps[i] = step;
+          if (index === -1) {
+            currentRecipe.steps.push(step);
+            continue;
+          }
+
+          currentRecipe.steps[index] = step;
+          continue;
         }
       }
     }
@@ -233,13 +309,13 @@ export class RecipesService {
     return currentRecipe;
   }
 
-  private async transformRecipes(
+  private async transformRecipe(
     value: TransformRecipeParam,
   ): Promise<RecipeWithUserId>;
-  private async transformRecipes(
+  private async transformRecipe(
     value: Array<TransformRecipeParam>,
   ): Promise<Array<RecipeWithUserId>>;
-  private async transformRecipes(
+  private async transformRecipe(
     value: TransformRecipeParam | Array<TransformRecipeParam>,
   ): Promise<RecipeWithUserId | Array<RecipeWithUserId>> {
     const recipes: Array<RecipeWithUserId> = [];

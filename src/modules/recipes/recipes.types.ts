@@ -16,26 +16,30 @@ export type RecipeWithUserId = {
   userId: string;
   name: string;
   description: string;
-  ingredients: Ingredient[];
+  ingredients: Array<Ingredient>;
   steps: Array<Steps>;
+
+  public: boolean;
+  authorId: string;
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type Ingredient = {
-  ingrendientId: number;
+  id: number;
   name: string;
-  quantity: number;
+  quantity?: number;
+  optional?: boolean;
 };
 
 export type Measurements = "tsp" | "tbsp" | "cup" | "oz" | "g" | "mg" | "ml";
 export type Steps = {
-  stepId: number;
+  id: number;
   description: string;
-  duration?: number;
+  duration?: number | [number, number];
   ingredients?: Array<{
-    ingredientId: string;
-    measurements: {
+    id: string;
+    measurements?: {
       quantity: number;
       measurement: Measurements;
     };
@@ -50,6 +54,9 @@ export type TransformRecipeParam = {
     description: string;
     ingredients: Array<Ingredient>;
     steps: Array<Steps>;
+
+    public: boolean;
+    authorId: string;
     createdAt: Date;
     updatedAt: Date;
   };

@@ -5,9 +5,8 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Param,
   Patch,
-  UseGuards,
+  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./users.types";
@@ -92,11 +91,9 @@ export class UsersController {
     };
   }
 
-  @Public()
   @Delete(":id")
-  // async deleteUser(@UserId() id: string) {
-  async deleteUser(@Param("id") id: string) {
-    const result = await this.usersService.deleteUser(id);
+  async deleteUser(@Query("userId") userId: string) {
+    const result = await this.usersService.deleteUser(userId);
 
     if (!result)
       throw new HttpException("User not found", HttpStatus.NOT_FOUND);

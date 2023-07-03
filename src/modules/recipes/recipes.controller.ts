@@ -1,6 +1,14 @@
 import { ROUTES } from "@/utils/constants";
 import { Public, UserId } from "@/utils/decorators";
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  Query,
+} from "@nestjs/common";
 import { RecipesService } from "./recipes.service";
 import { CreateRecipeDto, UpdateRecipeDto } from "./recipes.types";
 
@@ -27,14 +35,14 @@ export class RecipesController {
     };
   }
 
-  @Get(":recipeId")
+  @Get()
   async getRecipe(
-    @Param("recipeId")
+    @Query("recipeId")
     recipeId: string,
     @UserId()
     userId: string,
   ) {
-    const recipe = await this.recipesService.getRecipe(recipeId, userId);
+    const recipe = await this.recipesService.getLinkedRecipe(recipeId, userId);
 
     return {
       status: "ok",
@@ -56,10 +64,10 @@ export class RecipesController {
 
   @Patch()
   async updateRecipe(
-    @UserId()
-    userId: string,
     @Body()
     updateRecipeDto: UpdateRecipeDto,
+    @UserId()
+    userId: string,
   ) {
     const updatedRecipe = await this.recipesService.updateRecipe(
       userId,
@@ -70,6 +78,76 @@ export class RecipesController {
       status: "ok",
       statusCode: 200,
       data: updatedRecipe,
+    };
+  }
+
+  @Patch("public")
+  async makeRecipePublic(
+    @Body("recipeId")
+    recipeId: string,
+    @UserId()
+    userId: string,
+  ) {
+    const recipe = await this.recipesService.makeRecipePublic(recipeId, userId);
+
+    return {
+      status: "ok",
+      statusCode: 200,
+      data: recipe,
+    };
+  }
+
+  @Patch("private")
+  async makeRecipePrivate(
+    @Body("recipeId")
+    recipeId: string,
+    @UserId()
+    userId: string,
+  ) {
+    const recipe = await this.recipesService.makeRecipePrivate(
+      recipeId,
+      userId,
+    );
+
+    return {
+      status: "ok",
+      statusCode: 200,
+      data: recipe,
+    };
+  }
+
+  @Patch("save")
+  async saveRecipe(
+    @Body("recipeId")
+    recipeId: string,
+    @UserId()
+    userId: string,
+  ) {}
+
+  @Patch("remove")
+  async removeRecipe(
+    @Body("recipeId")
+    recipeId: string,
+    @UserId()
+    userId: string,
+  ) {}
+
+  @Delete()
+  async deleteRecipe(
+    @UserId()
+    userId: string,
+    @Body("recipeId")
+    recipeId: string,
+  ) {
+    const result = await this.recipesService.deleteRecipe(recipeId, userId);
+
+    return {
+      status: "ok",
+      statusCode: 200,
+      data: {
+        status: "deleted",
+        recipe: result,
+      },
     };
   }
 }
