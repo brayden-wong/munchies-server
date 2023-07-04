@@ -56,6 +56,27 @@ export class AuthService {
     return { at, rt, session };
   }
 
+  async validateToken(
+    token: string,
+    options: { type: "at" | "rt" } = { type: "at" },
+  ) {
+    const decoded = await this.jwtService.verifyAsync(token, {
+      secret:
+        options.type === "at"
+          ? this.config.get<string>("AT_SECRET")
+          : this.config.get<string>("RT_SECRET"),
+    });
+
+    const user = await this.usersService.getUser({
+      query: "id",
+      value: decoded.id,
+    });
+
+    if (!user) return null;
+
+    return { id: user.id };
+  }
+
   async refreshToken(refreshToken: string, userId: string) {
     const { at, rt } = await this.generateTokens(userId);
 

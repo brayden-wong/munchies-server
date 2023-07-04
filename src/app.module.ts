@@ -11,6 +11,7 @@ import {
   UsersModule,
 } from "@/modules";
 import { RecipesModule } from "./modules/recipes";
+import { WsModule } from "./modules/ws/ws.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RecipesModule } from "./modules/recipes";
     OAuthModule,
     RecipesModule,
     UsersModule,
+    WsModule,
   ],
   controllers: [],
   providers: [
