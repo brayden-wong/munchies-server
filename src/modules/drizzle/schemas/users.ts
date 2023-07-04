@@ -9,6 +9,8 @@ import { relations } from "drizzle-orm";
 import { sessions } from "./sessions";
 import { accounts } from "./accounts";
 import { usersToRecipes } from "./usersToRecipes";
+import { usersToRooms } from "./usersToRooms";
+import { messages } from "./messages";
 
 export const users = pgTable(
   "users",
@@ -38,9 +40,11 @@ export const userRelations = relations(users, ({ many, one }) => ({
     fields: [users.id],
     references: [accounts.userId],
   }),
-  usersToRecipes: many(usersToRecipes),
   sessions: one(sessions, {
     fields: [users.id],
     references: [sessions.userId],
   }),
+  messages: many(messages),
+  usersToRecipes: many(usersToRecipes),
+  usersToRooms: many(usersToRooms),
 }));

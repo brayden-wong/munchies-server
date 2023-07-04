@@ -2,7 +2,7 @@ import { Controller, Get, UseGuards } from "@nestjs/common";
 import { GoogleService } from "./google.service";
 
 import { ROUTES } from "@/utils/constants";
-import { Public, User } from "@/utils/decorators";
+import { Public, CurrentUser } from "@/utils/decorators";
 import { GoogleOAuthGuard } from "./google.oauth.guard";
 import { GoogleUser } from "./google.types";
 
@@ -18,7 +18,7 @@ export class GoogleController {
   @Public()
   @Get("callback")
   @UseGuards(GoogleOAuthGuard)
-  async googleAuthRedirect(@User() user: GoogleUser) {
+  async googleAuthRedirect(@CurrentUser() user: GoogleUser) {
     const result = await this.googleService.createProfile(user);
 
     return {

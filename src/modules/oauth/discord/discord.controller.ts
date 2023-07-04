@@ -1,4 +1,4 @@
-import { Public, ROUTES, User } from "@/utils";
+import { Public, ROUTES, CurrentUser } from "@/utils";
 import { Controller, Get, Session, UseGuards } from "@nestjs/common";
 import { DiscordOAuthGuard } from "./discord.oauth.guard";
 import { DiscordProfile } from "./discord.types";
@@ -18,7 +18,7 @@ export class DiscordController {
   @Public()
   @UseGuards(DiscordOAuthGuard)
   @Get("callback")
-  async callback(@User() user: DiscordProfile) {
+  async callback(@CurrentUser() user: DiscordProfile) {
     const result = await this.discordService.createProfile(user);
 
     return {

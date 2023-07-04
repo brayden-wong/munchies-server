@@ -64,6 +64,13 @@
       "when": 1688358724740,
       "tag": "0008_opposite_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1688507005647,
+      "tag": "0009_lame_scarlet_spider",
+      "breakpoints": true
     }
   ]
 }

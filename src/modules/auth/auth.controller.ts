@@ -13,7 +13,7 @@ import { UsersService, type CreateUserDto } from "@/modules/users";
 import { ROUTES } from "@/utils/constants";
 import { AuthService } from "./services";
 import { LocalGuard, RtGuard } from "./guards";
-import { Public, User, UserId } from "@/utils/decorators";
+import { Public, CurrentUser, UserId } from "@/utils/decorators";
 import { RefreshToken } from "@/utils";
 
 @Controller(ROUTES.AUTH)
@@ -68,7 +68,7 @@ export class AuthController {
   @Public()
   @Patch("refresh")
   @UseGuards(RtGuard)
-  async refreshToken(@User() user: RefreshToken) {
+  async refreshToken(@CurrentUser() user: RefreshToken) {
     const { at, rt, session } = await this.authService.refreshToken(
       user.rt,
       user.id,

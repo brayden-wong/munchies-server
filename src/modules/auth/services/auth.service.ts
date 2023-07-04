@@ -1,11 +1,12 @@
-import { Session, SessionsService } from "@/modules/sessions";
-import { CreateUserDto, User, UsersService } from "@/modules/users";
-import { HashService } from "@/modules/utils";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
+import { SessionsService } from "@/modules/sessions";
+import { UsersService } from "@/modules/users";
+import { HashService } from "@/modules/utils";
 import { isValidEmail } from "@/utils/functions";
+import type { Token } from "@/utils/types";
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,7 @@ export class AuthService {
     token: string,
     options: { type: "at" | "rt" } = { type: "at" },
   ) {
-    const decoded = await this.jwtService.verifyAsync(token, {
+    const decoded: Token = await this.jwtService.verifyAsync(token, {
       secret:
         options.type === "at"
           ? this.config.get<string>("AT_SECRET")
@@ -74,7 +75,7 @@ export class AuthService {
 
     if (!user) return null;
 
-    return { id: user.id };
+    return decoded;
   }
 
   async refreshToken(refreshToken: string, userId: string) {

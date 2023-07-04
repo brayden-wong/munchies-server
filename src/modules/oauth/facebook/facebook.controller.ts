@@ -1,4 +1,4 @@
-import { Public, User } from "@/utils";
+import { Public, CurrentUser } from "@/utils";
 import { ROUTES } from "@/utils/constants";
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { FacebookOAuthGuard } from "./facebook.oauth.guard";
@@ -18,7 +18,7 @@ export class FacebookController {
   @Public()
   @Get("redirect")
   @UseGuards(FacebookOAuthGuard)
-  async callback(@User() user: FacebookUser) {
+  async callback(@CurrentUser() user: FacebookUser) {
     const result = await this.facebookService.createProfile(user);
 
     return {

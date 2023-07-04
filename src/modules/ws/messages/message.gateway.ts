@@ -5,9 +5,9 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { UseGuards } from "@nestjs/common";
-import { Public, WsUserId } from "@/utils/decorators";
-import { ChatService } from "./chat.service";
-import { ROUTES } from "./chat.constants";
+
+import { MessageService } from "./message.service";
+import { WsUserId } from "../decorators";
 import { WsGuard } from "../ws.guard";
 
 import type { Server, Socket } from "socket.io";
@@ -17,16 +17,15 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: MessageService) {}
 
-  @Public()
-  // @UseGuards(WsGuard)
+  @UseGuards(WsGuard)
   @SubscribeMessage("message")
   async connect(
     @ConnectedSocket()
     socket: Socket,
-    // @WsUserId()
-    // userId: string,
+    @WsUserId()
+    userId: string,
   ) {
     return socket.emit("message", {
       message: "You are Gay!",

@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import { ChatModule } from "./chat";
+import { MessageModule } from "./messages";
 
 @Module({
-  imports: [ChatModule],
+  imports: [MessageModule],
 })
 export class WsModule {}

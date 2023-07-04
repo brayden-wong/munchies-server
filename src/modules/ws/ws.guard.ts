@@ -20,11 +20,11 @@ export class WsGuard extends AuthGuard(GUARDS.AT) {
 
   async canActivate(context: ExecutionContext) {
     const client = context.switchToWs().getClient();
-    const headers = client?.handshake.headers;
+    const headers = client?.handshake?.headers;
 
     if (!headers.authorization) return false;
 
-    const token = headers.authorization.split(" ")[1];
+    const token = headers.authorization;
 
     const userToken = await this.authService.validateToken(token);
 
