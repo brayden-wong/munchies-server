@@ -10,23 +10,32 @@ import "window-crypto";
 
 @Injectable()
 export class GeneratorService {
-  private readonly usernameConfig: Config;
-
-  constructor() {
-    this.usernameConfig = {
+  async generateUsername(
+    config: Config = {
       dictionaries: [adjectives, nouns],
-      randomDigits: 3,
-      length: 32,
+      randomDigits: 5,
+      length: 24,
       separator: " ",
-    };
+    },
+  ) {
+    return await this.transformName(uniqueUsernameGenerator(config));
   }
 
-  async generateUsername() {
-    const username = uniqueUsernameGenerator(this.usernameConfig)
+  async generateRoomName(
+    config: Config = {
+      dictionaries: [adjectives, nouns],
+      randomDigits: 4,
+      length: 24,
+      separator: " ",
+    },
+  ) {
+    return await this.transformName(uniqueUsernameGenerator(config));
+  }
+
+  private async transformName(value: string) {
+    return value
       .split(" ")
       .map((str) => str[0].toUpperCase() + str.slice(1))
       .join("");
-
-    return username;
   }
 }

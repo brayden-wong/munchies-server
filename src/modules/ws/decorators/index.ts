@@ -1,2 +1,2 @@
 export * from "./current.user.decorator";
-export * from "./ws.user.id.decorator";
+export * from "./current.user.id.decorator";

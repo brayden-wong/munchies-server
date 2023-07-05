@@ -71,6 +71,13 @@
       "when": 1688507005647,
       "tag": "0009_lame_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1688508463726,
+      "tag": "0010_young_molten_man",
+      "breakpoints": true
     }
   ]
 }

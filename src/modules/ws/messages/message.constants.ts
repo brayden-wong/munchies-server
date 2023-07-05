@@ -1,1 +1,3 @@
-export const SUBSCRIPTIONS = {} as const;
+export const SUBSCRIPTIONS = {
+  "send message": "message",
+} as const;

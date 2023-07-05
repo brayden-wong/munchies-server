@@ -60,7 +60,7 @@ import { DrizzleService } from "./drizzle.service";
 
         await client.connect();
 
-        const db = drizzle(client, { logger: true, schema });
+        const db = drizzle(client, { logger: false, schema });
 
         return db;
       },

@@ -1,15 +1,17 @@
 import {
   ConnectedSocket,
   MessageBody,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from "@nestjs/websockets";
 import { UseGuards } from "@nestjs/common";
 import type { Server, Socket } from "socket.io";
 
+import { SUBSCRIPTIONS } from "./rooms.constants";
 import { RoomsService } from "./rooms.service";
+import { CurrentUserId } from "../decorators";
 import { WsGuard } from "../ws.guard";
-import type { JoinRoomsParams } from "./rooms.types";
 
 @WebSocketGateway()
 export class RoomsGateway {
@@ -19,10 +21,45 @@ export class RoomsGateway {
   constructor(private readonly roomsService: RoomsService) {}
 
   @UseGuards(WsGuard)
+  @SubscribeMessage(SUBSCRIPTIONS["create room"])
+  async createRoom(
+    @ConnectedSocket()
+    socket: Socket,
+    @CurrentUserId()
+    currentUserId: string,
+    @MessageBody()
+    data: { userIds: Array<string> },
+  ) {
+    const room = await this.roomsService.createRoom({
+      creatorId: currentUserId,
+      users: data.userIds,
+    });
+
+    socket.join(room.id);
+    socket.emit(currentUserId, {
+      status: "ok",
+      statusCode: 201,
+      data: room,
+    });
+  }
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage(SUBSCRIPTIONS["join rooms"])
   async joinRooms(
     @ConnectedSocket()
     socket: Socket,
-    @MessageBody()
-    data: JoinRoomsParams,
-  ) {}
+    @CurrentUserId()
+    currentUserId: string,
+  ) {
+    const rooms = await this.roomsService.joinAllAssociatedRooms(currentUserId);
+    for (const room of rooms) {
+      await socket.join(room.id);
+    }
+
+    socket.emit(currentUserId, {
+      status: "ok",
+      statusCode: 200,
+      data: rooms,
+    });
+  }
 }

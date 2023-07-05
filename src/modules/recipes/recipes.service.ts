@@ -318,8 +318,6 @@ export class RecipesService {
   private async transformRecipe(
     value: TransformRecipeParam | Array<TransformRecipeParam>,
   ): Promise<RecipeWithUserId | Array<RecipeWithUserId>> {
-    const recipes: Array<RecipeWithUserId> = [];
-
     if (!Array.isArray(value)) {
       const { userId, recipes: recipe } = value;
       const { id, ...restOfRecipe } = recipe;
@@ -330,6 +328,8 @@ export class RecipesService {
         ...restOfRecipe,
       };
     }
+
+    const recipes: Array<RecipeWithUserId> = [];
 
     for (let i = 0; i < value.length; i++) {
       const { userId, recipes: recipe } = value[i];

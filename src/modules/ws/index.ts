@@ -1,1 +1,1 @@
-export * from "./messages";
+export * from "./ws.module";
