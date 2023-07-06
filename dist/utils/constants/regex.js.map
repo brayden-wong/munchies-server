@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/utils/constants/regex.ts"],"sourcesContent":["export const emailRegex: RegExp =\n  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n"],"names":["emailRegex"],"mappings":";;;;+BAAaA;;;eAAAA;;;AAAN,MAAMA,aACX"}

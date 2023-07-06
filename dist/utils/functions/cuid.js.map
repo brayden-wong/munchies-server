@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/utils/functions/cuid.ts"],"sourcesContent":["import { init } from \"@paralleldrive/cuid2\";\n\nexport const cuid = init({\n  length: 36,\n});\n"],"names":["cuid","init","length"],"mappings":";;;;+BAEaA;;;eAAAA;;;uBAFQ;AAEd,MAAMA,OAAOC,IAAAA,WAAI,EAAC;IACvBC,QAAQ;AACV"}
