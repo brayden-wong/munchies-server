@@ -6,6 +6,7 @@ import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./http.exception.filter";
 import { WsAdapter } from "./ws.adapter";
 
+import cors from "cors";
 import * as fs from "fs";
 
 async function bootstrap() {
@@ -14,23 +15,18 @@ async function bootstrap() {
 
   const keyFile = fs.readFileSync(__dirname + "/../config/server.key");
   const certFile = fs.readFileSync(__dirname + "/../config/server.crt");
-  const httpsOptions = {
-    key: keyFile,
-    cert: certFile,
-  };
 
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-  });
+  const app = await NestFactory.create(AppModule);
 
-  const httpsServer = createServer(httpsOptions);
+  const httpsServer = createServer();
 
   const config = app.get<ConfigService>(ConfigService);
   const PORT = config.get<number>("PORT");
   const WS_PORT = config.get<number>("WS_PORT");
 
+  app.use(cors());
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useWebSocketAdapter(new WsAdapter(httpsServer));
+  // app.useWebSocketAdapter(new WsAdapter(httpsServer));
   try {
     await app.listen(PORT, async () =>
       AppLogger.log(`Server is listening at ${await app.getUrl()}`),

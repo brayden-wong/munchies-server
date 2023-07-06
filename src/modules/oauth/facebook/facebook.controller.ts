@@ -1,10 +1,11 @@
 import { Public, CurrentUser } from "@/utils";
 import { ROUTES } from "@/utils/constants";
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, Res, UseGuards } from "@nestjs/common";
 import { FacebookOAuthGuard } from "./facebook.oauth.guard";
 import { Profile } from "passport-facebook";
 import { FacebookService } from "./facebook.service";
 import { FacebookUser } from "./facebook.types";
+import { Response } from "express";
 
 @Controller(ROUTES.FACEBOOK)
 export class FacebookController {
@@ -18,15 +19,13 @@ export class FacebookController {
   @Public()
   @Get("redirect")
   @UseGuards(FacebookOAuthGuard)
-  async callback(@CurrentUser() user: FacebookUser) {
+  async callback(@Res() res: Response, @CurrentUser() user: FacebookUser) {
     const result = await this.facebookService.createProfile(user);
 
-    return {
-      status: "ok",
-      statusCode: 200,
-      data: {
-        ...result,
-      },
-    };
+    const queryParams = `?at=${result.auth.at}&rt=${result.auth.rt}&id=${result.auth.session.userId}`;
+
+    return res
+      .status(200)
+      .redirect(`${process.env.APP_URL}/--/screens/login/login${queryParams}`);
   }
 }
