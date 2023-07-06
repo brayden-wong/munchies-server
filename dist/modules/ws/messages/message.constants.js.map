@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../../src/modules/ws/messages/message.constants.ts"],"sourcesContent":["export const SUBSCRIPTIONS = {\n  \"send message\": \"message\",\n} as const;\n"],"names":["SUBSCRIPTIONS"],"mappings":";;;;+BAAaA;;;eAAAA;;;AAAN,MAAMA,gBAAgB;IAC3B,gBAAgB;AAClB"}

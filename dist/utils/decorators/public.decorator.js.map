@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../../src/utils/decorators/public.decorator.ts"],"sourcesContent":["import { SetMetadata } from \"@nestjs/common\";\n\nexport const Public = () => SetMetadata(\"isPublic\", true);\n"],"names":["Public","SetMetadata"],"mappings":";;;;+BAEaA;;;eAAAA;;;wBAFe;AAErB,MAAMA,SAAS,IAAMC,IAAAA,mBAAW,EAAC,YAAY"}
