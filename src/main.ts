@@ -7,14 +7,13 @@ import { HttpExceptionFilter } from "./http.exception.filter";
 import { WsAdapter } from "./ws.adapter";
 
 import cors from "cors";
-import * as fs from "fs";
 
 async function bootstrap() {
   const AppLogger = new Logger("App");
   const WsLogger = new Logger("Websocket");
 
-  const keyFile = fs.readFileSync(__dirname + "/../config/server.key");
-  const certFile = fs.readFileSync(__dirname + "/../config/server.crt");
+  // const keyFile = fs.readFileSync(__dirname + "/../config/server.key");
+  // const certFile = fs.readFileSync(__dirname + "/../config/server.crt");
 
   const app = await NestFactory.create(AppModule);
 
