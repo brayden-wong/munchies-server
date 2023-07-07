@@ -26,6 +26,7 @@ export class AuthController {
   @Public()
   @Post("register")
   async register(@Body() createUserDto: CreateUserDto) {
+    console.log(createUserDto);
     const user = await this.usersService.createUser(createUserDto);
 
     if (!user) {
