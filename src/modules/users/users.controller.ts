@@ -91,8 +91,8 @@ export class UsersController {
     };
   }
 
-  @Delete(":id")
-  async deleteUser(@Query("userId") userId: string) {
+  @Delete()
+  async deleteUser(@UserId() userId: string) {
     const result = await this.usersService.deleteUser(userId);
 
     if (!result)

@@ -8,7 +8,6 @@ import cors from "cors";
 
 async function bootstrap() {
   const AppLogger = new Logger("App");
-  const WsLogger = new Logger("Websocket");
 
   const app = await NestFactory.create(AppModule);
 
@@ -23,7 +22,6 @@ async function bootstrap() {
     );
   } catch (error) {
     AppLogger.error(`Error starting server: ${error}`);
-    WsLogger.error(`Error starting websocket: ${error}`);
   }
 }
 bootstrap();

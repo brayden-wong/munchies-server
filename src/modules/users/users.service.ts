@@ -177,24 +177,12 @@ export class UsersService {
   async deleteUser(id: string) {
     try {
       const user = await this.db.transaction(async (tx) => {
-        const [result] = await this.db
-          .select({
-            id: users.id,
-            accountId: accounts.id,
-            sessionId: sessions.id,
-          })
-          .from(users)
-          .leftJoin(sessions, eq(users.id, sessions.userId))
-          .rightJoin(accounts, eq(users.id, accounts.userId))
-          .where(eq(users.id, id))
-          .limit(1)
-          .execute();
+        const result = await this.db.query.users.findFirst({
+          columns: { id: true },
+          where: (users, { eq }) => eq(users.id, id),
+        });
 
         if (!result) throw new Error("User not found");
-
-        const { accountId, sessionId } = result;
-        if (accountId) await this.deleteAccount(accountId);
-        if (sessionId) await this.deleteSession(sessionId);
 
         const [deletedUser] = await tx
           .delete(users)

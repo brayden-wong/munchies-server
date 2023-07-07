@@ -17,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(
     const user = await this.authService.validateUser(username, pass);
 
     if (!user)
-      throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
+      throw new HttpException("Invalid Credentials", HttpStatus.UNAUTHORIZED);
 
     return { id: user.id };
   }
