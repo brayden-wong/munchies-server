@@ -16,7 +16,6 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  @UseGuards(WsGuard)
   handleConnection(
     @ConnectedSocket()
     socket: Socket,
@@ -24,7 +23,6 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     userId: string,
   ) {
     console.log(`socket ${socket.id} has connected`);
-    console.log(userId, "has connected");
   }
 
   handleDisconnect(
