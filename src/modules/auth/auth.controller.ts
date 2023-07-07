@@ -26,7 +26,6 @@ export class AuthController {
   @Public()
   @Post("register")
   async register(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     const user = await this.usersService.createUser(createUserDto);
 
     if (!user) {
@@ -53,7 +52,7 @@ export class AuthController {
   @Post("login")
   @UseGuards(LocalGuard)
   async login(@UserId() userId: string) {
-    const { at, rt, session } = await this.authService.login(userId);
+    const { at, rt } = await this.authService.login(userId);
 
     return {
       status: "ok",
@@ -61,7 +60,7 @@ export class AuthController {
       data: {
         at,
         rt,
-        session,
+        userId,
       },
     };
   }
