@@ -69,10 +69,7 @@ export class AuthController {
   @Patch("refresh")
   @UseGuards(RtGuard)
   async refreshToken(@CurrentUser() user: RefreshToken) {
-    const { at, rt, session } = await this.authService.refreshToken(
-      user.rt,
-      user.id,
-    );
+    const { at, rt } = await this.authService.refreshToken(user.rt, user.id);
 
     return {
       status: "ok",
@@ -80,7 +77,7 @@ export class AuthController {
       data: {
         at,
         rt,
-        session,
+        userId: user.id,
       },
     };
   }

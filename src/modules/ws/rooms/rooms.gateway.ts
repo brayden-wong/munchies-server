@@ -56,6 +56,8 @@ export class RoomsGateway {
       await socket.join(room.id);
     }
 
+    await socket.join(currentUserId);
+
     socket.emit(currentUserId, {
       status: "ok",
       statusCode: 200,
