@@ -26,7 +26,6 @@ export class DiscordController {
   @Get("callback")
   async callback(@Res() res: Response, @CurrentUser() user: DiscordProfile) {
     const result = await this.discordService.createProfile(user);
-    console.log(result);
 
     const queryParams = `?at=${result.auth.at}&rt=${result.auth.rt}&id=${result.auth.session.userId}`;
 
