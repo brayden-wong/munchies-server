@@ -52,8 +52,8 @@ export class RoomsGateway {
     currentUserId: string,
   ) {
     const rooms = await this.roomsService.joinAllAssociatedRooms(currentUserId);
-    for (const room of rooms) {
-      await socket.join(room.id);
+    for (const { roomId } of rooms) {
+      await socket.join(roomId);
     }
 
     await socket.join(currentUserId);
@@ -63,5 +63,7 @@ export class RoomsGateway {
       statusCode: 200,
       data: rooms,
     });
+
+    return rooms;
   }
 }

@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import {
   Database,
   InjectDrizzle,
-  rooms,
+  rooms as roomsTable,
   usersToRooms,
 } from "@/modules/drizzle";
 import { cuid } from "@/utils/functions";
@@ -10,9 +10,12 @@ import { cuid } from "@/utils/functions";
 import type {
   CreateRoomParams,
   DatabaseRoom,
+  Room,
+  Rooms,
   TransformedRoom,
 } from "./rooms.types";
 import { GeneratorService } from "@/modules/utils";
+import { eq } from "drizzle-orm";
 
 @Injectable()
 export class RoomsService {
@@ -28,7 +31,7 @@ export class RoomsService {
     const id = cuid();
 
     const [room] = await this.db
-      .insert(rooms)
+      .insert(roomsTable)
       .values({
         id,
         name,
@@ -38,31 +41,54 @@ export class RoomsService {
 
     this.linkUsersToRooms([...users, creatorId], room.id);
 
-    // await this.db.delete(rooms);
-
     return room;
   }
 
   async joinAllAssociatedRooms(userId: string) {
-    const rooms = await this.db.query.usersToRooms.findMany({
-      with: {
-        room: true,
-      },
-      where: (usersToRooms, { eq }) => {
-        return eq(usersToRooms.userId, userId);
-      },
-    });
+    return await this.db.transaction(async (tx) => {
+      const roomIds = await tx.query.usersToRooms
+        .findMany({
+          columns: { roomId: true },
+          where: (usersToRooms, { eq }) => eq(usersToRooms.userId, userId),
+        })
+        .execute();
 
-    return await this.transformData(rooms);
+      const rooms: Rooms = [];
+      for (const { roomId } of roomIds) {
+        const allRooms = await tx.query.usersToRooms
+          .findMany({
+            columns: {},
+            with: {
+              user: { columns: { id: true } },
+              room: { columns: { id: true } },
+            },
+            where: eq(usersToRooms.roomId, roomId),
+          })
+          .execute();
+
+        const room: Room = {
+          roomId: userId,
+          users: [],
+        };
+        for (const {
+          room: { id },
+          user: { id: userId },
+        } of allRooms) {
+          room.roomId = id;
+          room.users.push(userId);
+        }
+
+        rooms.push(room);
+      }
+
+      return rooms;
+    });
   }
 
-  private async transformData(
-    value: Array<DatabaseRoom>,
-  ): Promise<Array<TransformedRoom>>;
   private async transformData(value: DatabaseRoom): Promise<TransformedRoom>;
   private async transformData(
-    value: DatabaseRoom | Array<DatabaseRoom>,
-  ): Promise<TransformedRoom | Array<TransformedRoom>> {
+    value: DatabaseRoom | Array<any>,
+  ): Promise<TransformedRoom> {
     if (!Array.isArray(value)) {
       const {
         userId,
@@ -75,19 +101,6 @@ export class RoomsService {
         ...room,
       };
     }
-
-    const rooms: Array<TransformedRoom> = [];
-
-    for (const room of value) {
-      const {
-        userId,
-        room: { id, ...roomData },
-      } = room;
-
-      rooms.push({ userId, id, ...roomData });
-    }
-
-    return rooms;
   }
 
   private async linkUsersToRooms(users: Array<string>, roomId: string) {

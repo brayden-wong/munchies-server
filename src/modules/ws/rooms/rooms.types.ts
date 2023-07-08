@@ -27,3 +27,10 @@ export type TransformedRoom = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Room = {
+  roomId: string;
+  users: Array<string>;
+};
+
+export type Rooms = Array<Room>;
