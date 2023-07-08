@@ -58,7 +58,7 @@ export class RoomsGateway {
 
     await socket.join(currentUserId);
 
-    socket.emit(currentUserId, {
+    this.server.to(currentUserId).emit("rooms", {
       status: "ok",
       statusCode: 200,
       data: rooms,
