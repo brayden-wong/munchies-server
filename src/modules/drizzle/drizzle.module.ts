@@ -1,7 +1,8 @@
 import { Global, Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Client } from "pg";
+import { ConfigService } from "@nestjs/config";
+// import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon, neonConfig } from "@neondatabase/serverless";
 
 import * as schema from "./schemas";
 import {
@@ -44,23 +45,23 @@ import { DrizzleService } from "./drizzle.service";
         user,
         ...config
       }: DrizzleConfig): Promise<Database> => {
-        const connectionString = `postgres://${user}:${password}@${host}${
+        const uri = `postgres://${user}:${password}@${host}${
           process.env.NODE_ENV === "docker" ? `:${config.port}` : ""
         }/${database}`;
 
-        const client = new Client({
-          connectionString,
-          ssl:
-            process.env.NODE_ENV === "production"
-              ? true
-              : process.env.NODE_ENV === "development"
-              ? true
-              : false,
-        });
+        // const client = new Client({
+        //   connectionString,
+        //   ssl:
+        //     process.env.NODE_ENV === "production"
+        //       ? true
+        //       : process.env.NODE_ENV === "development"
+        //       ? true
+        //       : false,
+        // });
+        neonConfig.fetchConnectionCache = true;
+        const sql = neon(uri);
 
-        await client.connect();
-
-        const db = drizzle(client, { logger: true, schema });
+        const db = drizzle(sql, { logger: true, schema });
 
         return db;
       },
