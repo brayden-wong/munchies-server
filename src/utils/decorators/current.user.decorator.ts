@@ -9,13 +9,16 @@ import type { Request } from "express";
 export const CurrentUser = createParamDecorator(
   (
     data: {
-      user: "User" | "GoogleUser" | "FacebookUser";
+      user: "User" | "GoogleUser" | "FacebookUser" | "DiscordUser";
       key:
-        | keyof User
-        | keyof GoogleUser
-        | keyof FacebookUser
-        | keyof DiscordProfile;
-    },
+        | (
+            | keyof User
+            | keyof GoogleUser
+            | keyof FacebookUser
+            | keyof DiscordProfile
+          )
+        | null;
+    } = { user: "User", key: null },
     context: ExecutionContext,
   ) => {
     const request = context.switchToHttp().getRequest<Request>();
@@ -41,7 +44,7 @@ export const CurrentUser = createParamDecorator(
       return data.key ? user[key] : user;
     }
 
-    if (data.user === "DiscordProfile") {
+    if (data.user === "DiscordUser") {
       const user = request.user as DiscordProfile;
       const key = data.key as keyof DiscordProfile;
 

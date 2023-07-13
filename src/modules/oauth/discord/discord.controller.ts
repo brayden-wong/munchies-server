@@ -24,7 +24,10 @@ export class DiscordController {
   @Public()
   @UseGuards(DiscordOAuthGuard)
   @Get("callback")
-  async callback(@Res() res: Response, @CurrentUser() user: DiscordProfile) {
+  async callback(
+    @Res() res: Response,
+    @CurrentUser({ user: "DiscordUser", key: null }) user: DiscordProfile,
+  ) {
     const { auth, user: currentUser } = await this.discordService.createProfile(
       user,
     );
