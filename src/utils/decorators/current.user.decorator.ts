@@ -24,28 +24,28 @@ export const CurrentUser = createParamDecorator(
       const user = request.user as User;
       const key = data.key as keyof User;
 
-      return user[key];
+      return data.key ? user[key] : user;
     }
 
     if (data.user === "GoogleUser") {
       const user = request.user as GoogleUser;
       const key = data.key as keyof GoogleUser;
 
-      return user[key];
+      return data.key ? user[key] : user;
     }
 
     if (data.user === "FacebookUser") {
       const user = request.user as FacebookUser;
       const key = data.key as keyof FacebookUser;
 
-      return user[key];
+      return data.key ? user[key] : user;
     }
 
     if (data.user === "DiscordProfile") {
       const user = request.user as DiscordProfile;
       const key = data.key as keyof DiscordProfile;
 
-      return user[key];
+      return data.key ? user[key] : user;
     }
   },
 );
