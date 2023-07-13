@@ -2,7 +2,6 @@ import { Public, CurrentUser } from "@/utils";
 import { ROUTES } from "@/utils/constants";
 import { Controller, Get, Res, UseGuards } from "@nestjs/common";
 import { FacebookOAuthGuard } from "./facebook.oauth.guard";
-import { Profile } from "passport-facebook";
 import { FacebookService } from "./facebook.service";
 import { FacebookUser } from "./facebook.types";
 import { Response } from "express";

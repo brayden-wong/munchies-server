@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 
-import { InjectDrizzle, accounts, sessions, users } from "@/modules/drizzle";
+import { InjectDrizzle, users } from "@/modules/drizzle";
 import { CreateUserDto, FindOneParams, UpdateUserDto } from "./users.types";
 
 import type { Database } from "@/modules/drizzle";
 import { HashService } from "../utils";
-import { and, asc, eq, isNull, like } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { cuid } from "@/utils";
 
 @Injectable()
@@ -213,13 +213,13 @@ export class UsersService {
       : { exists: false, id: null };
   }
 
-  private async deleteAccount(accountId: string) {
-    await this.db.delete(accounts).where(eq(accounts.id, accountId)).execute();
-  }
+  // private async deleteAccount(accountId: string) {
+  //   await this.db.delete(accounts).where(eq(accounts.id, accountId)).execute();
+  // }
 
-  private async deleteSession(sessionId: string) {
-    await this.db.delete(sessions).where(eq(sessions.id, sessionId)).execute();
-  }
+  // private async deleteSession(sessionId: string) {
+  //   await this.db.delete(sessions).where(eq(sessions.id, sessionId)).execute();
+  // }
 
   private async parseQuery({ query, value }: FindOneParams) {
     const result =

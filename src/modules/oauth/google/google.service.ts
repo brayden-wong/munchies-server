@@ -1,13 +1,11 @@
-import { Database, InjectDrizzle } from "@/modules/drizzle";
-import { SessionsService } from "@/modules/sessions";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { AccountsService } from "@/modules/accounts";
+import { AuthService } from "@/modules/auth";
 import { UsersService } from "@/modules/users";
 import { GeneratorService } from "@/modules/utils";
-import { cuid } from "@/utils/functions";
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { AuthService } from "../../auth/services/auth.service";
 
+import { cuid } from "@/utils/functions";
 import type { CreateProfileReturnType, GoogleUser } from "./google.types";
-import { AccountsService } from "@/modules/accounts";
 
 @Injectable()
 export class GoogleService {
@@ -48,7 +46,7 @@ export class GoogleService {
     const accountId = cuid();
     const username = await this.generatorService.generateUsername();
 
-    const { providerId, email, provider, picture, name } = profile;
+    const { providerId, email, provider, picture: _, name } = profile;
 
     const user = {
       id: userId,

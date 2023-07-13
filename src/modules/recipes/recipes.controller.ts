@@ -1,5 +1,5 @@
 import { ROUTES } from "@/utils/constants";
-import { Public, UserId } from "@/utils/decorators";
+import { UserId } from "@/utils/decorators";
 import {
   Body,
   Controller,
@@ -116,21 +116,21 @@ export class RecipesController {
     };
   }
 
-  @Patch("save")
-  async saveRecipe(
-    @Body("recipeId")
-    recipeId: string,
-    @UserId()
-    userId: string,
-  ) {}
+  // @Patch("save")
+  // async saveRecipe(
+  //   @Body("recipeId")
+  //   recipeId: string,
+  //   @UserId()
+  //   userId: string,
+  // ) {}
 
-  @Patch("remove")
-  async removeRecipe(
-    @Body("recipeId")
-    recipeId: string,
-    @UserId()
-    userId: string,
-  ) {}
+  // @Patch("remove")
+  // async removeRecipe(
+  //   @Body("recipeId")
+  //   recipeId: string,
+  //   @UserId()
+  //   userId: string,
+  // ) {}
 
   @Delete()
   async deleteRecipe(

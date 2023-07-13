@@ -6,7 +6,6 @@ import {
   HttpException,
   HttpStatus,
   Patch,
-  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./users.types";

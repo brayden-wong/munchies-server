@@ -1,4 +1,3 @@
-import { UseGuards } from "@nestjs/common";
 import {
   WebSocketGateway,
   OnGatewayConnection,
@@ -6,10 +5,7 @@ import {
   ConnectedSocket,
   OnGatewayDisconnect,
 } from "@nestjs/websockets";
-import { C } from "drizzle-orm/db.d-cf0abe10";
 import type { Server, Socket } from "socket.io";
-import { WsGuard } from "./ws.guard";
-import { CurrentUserId } from "./decorators";
 
 @WebSocketGateway()
 export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -19,8 +15,6 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(
     @ConnectedSocket()
     socket: Socket,
-    @CurrentUserId()
-    userId: string,
   ) {
     console.log(`socket ${socket.id} has connected`);
   }

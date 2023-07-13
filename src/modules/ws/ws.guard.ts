@@ -1,6 +1,5 @@
 import { GUARDS } from "@/utils/constants";
 import { Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "@/modules";
 
@@ -12,8 +11,6 @@ export class WsGuard extends AuthGuard(GUARDS.AT) {
   constructor(
     @Inject(AuthService)
     private readonly authService: AuthService,
-    @Inject(ConfigService)
-    private readonly config: ConfigService,
   ) {
     super();
   }

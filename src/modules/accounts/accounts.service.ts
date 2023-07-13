@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Database, InjectDrizzle, accounts, users } from "@/modules/drizzle";
+import { Database, InjectDrizzle, accounts } from "@/modules/drizzle";
 import type {
   AccountExistsParams,
   CreateAccountDto,

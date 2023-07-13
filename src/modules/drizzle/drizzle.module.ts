@@ -49,15 +49,6 @@ import { DrizzleService } from "./drizzle.service";
           process.env.NODE_ENV === "docker" ? `:${config.port}` : ""
         }/${database}`;
 
-        // const client = new Client({
-        //   connectionString,
-        //   ssl:
-        //     process.env.NODE_ENV === "production"
-        //       ? true
-        //       : process.env.NODE_ENV === "development"
-        //       ? true
-        //       : false,
-        // });
         neonConfig.fetchConnectionCache = true;
         const sql = neon(uri);
 

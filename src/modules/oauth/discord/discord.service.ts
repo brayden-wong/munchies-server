@@ -1,11 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 
-import {
-  AccountsService,
-  AuthService,
-  SessionsService,
-  UsersService,
-} from "@/modules";
+import { AccountsService, AuthService, UsersService } from "@/modules";
 import { DiscordProfile } from "./discord.types";
 import { cuid } from "@/utils/functions";
 @Injectable()
@@ -39,7 +34,7 @@ export class DiscordService {
 
       const session = await this.authService.login(existingUserId);
 
-      return { account: null, auth: session, user: existingAccount.users };
+      return { auth: session, user: existingAccount.users };
     }
 
     const user = await this.usersService.createUser({

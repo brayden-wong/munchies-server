@@ -127,8 +127,7 @@ export class RecipesService {
         updateRecipeDto,
       );
 
-      const { userId: recipeUserId, recipe: recipeData } =
-        await this.extractUserId(updatedRecipe);
+      const { recipe: recipeData } = await this.extractUserId(updatedRecipe);
 
       const [recipe] = await tx
         .update(recipes)
@@ -233,9 +232,14 @@ export class RecipesService {
     currentRecipe: RecipeWithUserId,
     updateRecipeDto: UpdateRecipeDto,
   ) {
-    for (const [key, value] of Object.entries(updateRecipeDto)) {
-      if (key !== "ingredients" && key !== "steps") {
-        currentRecipe[key] = value;
+    for (let [objectKey, objectValue] of Object.entries(updateRecipeDto)) {
+      const key = objectKey as keyof UpdateRecipeDto;
+      if (
+        key !== "ingredients" &&
+        key !== "steps" &&
+        typeof objectValue === "string"
+      ) {
+        currentRecipe[key] = objectValue;
         continue;
       }
 
@@ -281,7 +285,7 @@ export class RecipesService {
           const newSteps = currentRecipe.steps.map((step) => {
             if (step.id !== currentStep.id) return step;
 
-            return newSteps;
+            return currentStep;
           });
 
           currentRecipe.steps = newSteps;

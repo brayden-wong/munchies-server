@@ -1,6 +1,5 @@
 import { STRATEGIES } from "@/utils";
-import { Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Profile, Strategy } from "passport-discord";
 import { Done } from "./discord.types";
@@ -10,14 +9,11 @@ export class DiscordOAuthStrategy extends PassportStrategy(
   Strategy,
   STRATEGIES.DISCORD,
 ) {
-  constructor(
-    @Inject(ConfigService)
-    private readonly config: ConfigService,
-  ) {
+  constructor() {
     super({
-      clientID: config.get<string>("DISCORD_CLIENT_ID"),
-      clientSecret: config.get<string>("DISCORD_CLIENT_SECRET"),
-      callbackURL: config.get<string>("DISCORD_CALLBACK_URL"),
+      clientID: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      callbackURL: process.env.DISCORD_CALLBACK_URL,
       scope: ["identify", "email"],
     });
   }

@@ -1,9 +1,4 @@
-import {
-  AccountsService,
-  GeneratorService,
-  SessionsService,
-  UsersService,
-} from "@/modules";
+import { AccountsService, GeneratorService, UsersService } from "@/modules";
 import { AuthService } from "@/modules/auth";
 import { Inject, Injectable } from "@nestjs/common";
 import type { FacebookUser } from "./facebook.types";
@@ -39,7 +34,7 @@ export class FacebookService {
     const accountId = cuid();
     const username = await this.generatorService.generateUsername();
 
-    const { name, picture, providerId, provider } = profile;
+    const { name, picture: _, providerId, provider } = profile;
 
     const user = {
       id: userId,

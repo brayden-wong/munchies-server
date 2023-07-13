@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Database, InjectDrizzle, messages } from "@/modules/drizzle";
 import { CreateMessageDto } from "./message.types";
-import { cuid } from "@/utils/functions";
 
 @Injectable()
 export class MessageService {

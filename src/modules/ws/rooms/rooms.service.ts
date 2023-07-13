@@ -7,13 +7,7 @@ import {
 } from "@/modules/drizzle";
 import { cuid } from "@/utils/functions";
 
-import type {
-  CreateRoomParams,
-  DatabaseRoom,
-  Room,
-  Rooms,
-  TransformedRoom,
-} from "./rooms.types";
+import type { CreateRoomParams, Room, Rooms } from "./rooms.types";
 import { GeneratorService } from "@/modules/utils";
 import { eq } from "drizzle-orm";
 
@@ -65,7 +59,7 @@ export class RoomsService {
                   username: true,
                   email: true,
                   name: true,
-                }
+                },
               },
               room: { columns: { id: true } },
             },
@@ -79,7 +73,7 @@ export class RoomsService {
         };
         for (const {
           room: { id },
-          user
+          user,
         } of allRooms) {
           room.roomId = id;
           room.users.push(user);
@@ -92,23 +86,23 @@ export class RoomsService {
     });
   }
 
-  private async transformData(value: DatabaseRoom): Promise<TransformedRoom>;
-  private async transformData(
-    value: DatabaseRoom,
-  ): Promise<TransformedRoom> {
-    if (!Array.isArray(value)) {
-      const {
-        userId,
-        room: { id, ...room },
-      } = value;
+  // private async transformData(value: DatabaseRoom): Promise<TransformedRoom>;
+  // private async transformData(
+  //   value: DatabaseRoom,
+  // ): Promise<TransformedRoom> {
+  //   if (!Array.isArray(value)) {
+  //     const {
+  //       userId,
+  //       room: { id, ...room },
+  //     } = value;
 
-      return {
-        id,
-        userId,
-        ...room,
-      };
-    }
-  }
+  //     return {
+  //       id,
+  //       userId,
+  //       ...room,
+  //     };
+  //   }
+  // }
 
   private async linkUsersToRooms(users: Array<string>, roomId: string) {
     await this.db
