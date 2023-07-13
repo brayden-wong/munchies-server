@@ -12,6 +12,7 @@ import {
 } from "@/modules";
 import { RecipesModule } from "./modules/recipes";
 import { WsModule } from "./modules/ws/ws.module";
+import {AppController} from './app.controller';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { WsModule } from "./modules/ws/ws.module";
     UsersModule,
     WsModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

@@ -1,10 +1,10 @@
-import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { rooms } from "./rooms";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const messages = pgTable("messages", {
-  id: varchar("id", { length: 36 }).primaryKey(),
+  id: serial("id").primaryKey(),
   content: text("content"),
 
   authorId: varchar("authorId", { length: 36 })

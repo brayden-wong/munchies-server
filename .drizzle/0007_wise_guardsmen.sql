@@ -1,1 +1,0 @@
-ALTER TABLE "recipes" ADD COLUMN "authorId" varchar(36);

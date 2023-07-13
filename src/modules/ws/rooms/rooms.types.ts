@@ -30,7 +30,12 @@ export type TransformedRoom = {
 
 export type Room = {
   roomId: string;
-  users: Array<string>;
+  users: Array<{
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+  }>;
 };
 
 export type Rooms = Array<Room>;

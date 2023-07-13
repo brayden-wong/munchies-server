@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { Database, InjectDrizzle, accounts, users } from "@/modules/drizzle";
-import type { AccountExistsParams, CreateAccountDto } from "./accounts.types";
+import type {
+  AccountExistsParams,
+  CreateAccountDto,
+  ParseQueryParams,
+} from "./accounts.types";
 import { eq } from "drizzle-orm";
 
 @Injectable()
@@ -23,13 +27,23 @@ export class AccountsService {
     const queryResult = await this.parseQuery({ query, value });
 
     const account = await this.db.query.accounts.findFirst({
+      with: {
+        users: {
+          columns: {
+            id: true,
+            username: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
       where: queryResult,
     });
 
     return account;
   }
 
-  async accountExists({ query, value }: AccountExistsParams) {
+  async accountExists({ query, value }: ParseQueryParams) {
     const queryResult = await this.parseQuery({ query, value });
 
     const result = await this.db.query.accounts.findFirst({
@@ -42,7 +56,7 @@ export class AccountsService {
       : { exists: false, id: null };
   }
 
-  private async parseQuery({ query, value }: AccountExistsParams) {
+  private async parseQuery({ query, value }: ParseQueryParams) {
     return query === "providerId"
       ? eq(accounts.providerId, value)
       : eq(accounts.userId, value);

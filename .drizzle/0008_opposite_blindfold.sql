@@ -1,1 +1,0 @@
-ALTER TABLE "recipes" ADD COLUMN "public" boolean DEFAULT false NOT NULL;

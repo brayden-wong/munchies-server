@@ -59,7 +59,14 @@ export class RoomsService {
           .findMany({
             columns: {},
             with: {
-              user: { columns: { id: true } },
+              user: {
+                columns: {
+                  id: true,
+                  username: true,
+                  email: true,
+                  name: true,
+                }
+              },
               room: { columns: { id: true } },
             },
             where: eq(usersToRooms.roomId, roomId),
@@ -72,10 +79,10 @@ export class RoomsService {
         };
         for (const {
           room: { id },
-          user: { id: userId },
+          user
         } of allRooms) {
           room.roomId = id;
-          room.users.push(userId);
+          room.users.push(user);
         }
 
         rooms.push(room);
@@ -87,7 +94,7 @@ export class RoomsService {
 
   private async transformData(value: DatabaseRoom): Promise<TransformedRoom>;
   private async transformData(
-    value: DatabaseRoom | Array<any>,
+    value: DatabaseRoom,
   ): Promise<TransformedRoom> {
     if (!Array.isArray(value)) {
       const {

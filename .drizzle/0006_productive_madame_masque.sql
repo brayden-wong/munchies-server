@@ -1,1 +1,0 @@
-CREATE INDEX IF NOT EXISTS "idIndex" ON "usersToRecipes" ("userId","recipeId");

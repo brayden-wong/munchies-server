@@ -15,7 +15,6 @@ export class MessageService {
       .insert(messages)
       .values({
         ...createMessageDto,
-        id: cuid(),
         authorId: userId,
       })
       .returning()

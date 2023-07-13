@@ -8,3 +8,8 @@ export type AccountExistsParams = {
   query: "providerId" | "userId";
   value: string;
 };
+
+export type ParseQueryParams = {
+  query: "providerId" | "userId";
+  value: string;
+}

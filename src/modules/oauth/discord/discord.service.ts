@@ -39,7 +39,7 @@ export class DiscordService {
 
       const session = await this.authService.login(existingUserId);
 
-      return { account: null, auth: session, user: null };
+      return { account: null, auth: session, user: existingAccount.users };
     }
 
     const user = await this.usersService.createUser({
@@ -50,13 +50,21 @@ export class DiscordService {
 
     const session = await this.authService.login(user.id);
 
-    const account = await this.accountsService.createAccount({
+    await this.accountsService.createAccount({
       id: cuid(),
       userId: user.id,
       provider: profile.provider,
       providerId: profile.providerId,
     });
 
-    return { account, auth: session, user };
+    return {
+      auth: session,
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      },
+    };
   }
 }

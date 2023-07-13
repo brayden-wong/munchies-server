@@ -25,9 +25,15 @@ export class DiscordController {
   @UseGuards(DiscordOAuthGuard)
   @Get("callback")
   async callback(@Res() res: Response, @CurrentUser() user: DiscordProfile) {
-    const result = await this.discordService.createProfile(user);
+    const { auth, user: currentUser } = await this.discordService.createProfile(
+      user,
+    );
 
-    const queryParams = `?at=${result.auth.at}&rt=${result.auth.rt}&id=${result.auth.session.userId}`;
+    const queryParams = `?at=${auth.at}&rt=${auth.rt}&userId=${
+      currentUser.id
+    }&username=${currentUser.username}&name=${currentUser.name ?? ""}&email=${
+      currentUser.email ?? ""
+    }`;
 
     return res
       .status(200)
