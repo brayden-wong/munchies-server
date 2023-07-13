@@ -1,5 +1,6 @@
-import { FacebookUser } from "@/modules/oauth/facebook";
-import { GoogleUser } from "@/modules/oauth/google";
+import type { DiscordProfile } from "@/modules/oauth/discord/";
+import type { FacebookUser } from "@/modules/oauth/facebook";
+import type { GoogleUser } from "@/modules/oauth/google";
 import { User } from "@/modules/users";
 import { createParamDecorator } from "@nestjs/common";
 import type { ExecutionContext } from "@nestjs/common";
@@ -9,7 +10,11 @@ export const CurrentUser = createParamDecorator(
   (
     data: {
       user: "User" | "GoogleUser" | "FacebookUser";
-      key: keyof User | keyof GoogleUser | keyof FacebookUser;
+      key:
+        | keyof User
+        | keyof GoogleUser
+        | keyof FacebookUser
+        | keyof DiscordProfile;
     },
     context: ExecutionContext,
   ) => {
@@ -32,6 +37,13 @@ export const CurrentUser = createParamDecorator(
     if (data.user === "FacebookUser") {
       const user = request.user as FacebookUser;
       const key = data.key as keyof FacebookUser;
+
+      return user[key];
+    }
+
+    if (data.user === "DiscordProfile") {
+      const user = request.user as DiscordProfile;
+      const key = data.key as keyof DiscordProfile;
 
       return user[key];
     }
