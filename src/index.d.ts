@@ -30,14 +30,4 @@ declare namespace NodeJS {
   }
 }
 
-declare global {
-  namespace Express {
-    export interface GoogleUser {
-      provider: "google";
-      providerId: string;
-      email: string;
-      name: string;
-      picture: string;
-    }
-  }
-}
+declare global {}
