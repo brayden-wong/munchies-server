@@ -18,6 +18,7 @@ export class DiscordController {
   @UseGuards(DiscordOAuthGuard)
   @Get()
   async discordLogin() {
+    console.log("endpoint hit");
     return { message: "login" };
   }
 
@@ -28,6 +29,7 @@ export class DiscordController {
     @Res() res: Response,
     @CurrentUser({ user: "DiscordUser", key: null }) user: DiscordProfile,
   ) {
+    console.log("here");
     const { auth, user: currentUser } = await this.discordService.createProfile(
       user,
     );
@@ -37,6 +39,8 @@ export class DiscordController {
     }&username=${currentUser.username}&name=${currentUser.name ?? ""}&email=${
       currentUser.email ?? ""
     }`;
+
+    console.log(auth.rt);
 
     return res
       .status(200)

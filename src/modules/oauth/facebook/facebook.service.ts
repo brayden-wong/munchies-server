@@ -1,6 +1,6 @@
 import { AccountsService, GeneratorService, UsersService } from "@/modules";
 import { AuthService } from "@/modules/auth";
-import { Inject, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import type { FacebookUser } from "./facebook.types";
 import { cuid } from "@/utils/functions";
 
@@ -25,9 +25,18 @@ export class FacebookService {
       });
 
     if (exists) {
+      const existingAccount = await this.accountsService.getAccount({
+        query: "userId",
+        value: existingUserId,
+      });
+
+      if (existingAccount.provider !== "facebook")
+        throw new ConflictException(
+          "Email is already associated with another account",
+        );
       const { at, rt, session } = await this.authService.login(existingUserId);
 
-      return { user: null, account: null, auth: { at, rt, session } };
+      return { auth: { at, rt, session }, user: existingAccount.users };
     }
 
     const userId = cuid();
@@ -46,13 +55,13 @@ export class FacebookService {
 
     const session = await this.authService.login(newUser.id);
 
-    const account = await this.accountsService.createAccount({
+    await this.accountsService.createAccount({
       id: accountId,
       provider,
       providerId,
       userId,
     });
 
-    return { account, auth: session, user: newUser };
+    return { auth: session, user: newUser };
   }
 }

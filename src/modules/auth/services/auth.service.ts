@@ -33,6 +33,7 @@ export class AuthService {
   }
 
   async login(userId: string) {
+    console.log(userId);
     const isValidSession = await this.sessionsService.validateSession(userId);
 
     const { at, rt } = await this.generateTokens(userId);
@@ -78,7 +79,7 @@ export class AuthService {
     return decoded;
   }
 
-  async refreshToken(refreshToken: string, userId: string) {
+  async refreshToken(userId: string, refreshToken: string) {
     const { at, rt } = await this.generateTokens(userId);
 
     const session = await this.sessionsService.updateSession(userId, {
@@ -94,6 +95,7 @@ export class AuthService {
   }
 
   private async generateTokens(id: string) {
+    console.log("id passed in to tokens\n", id);
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         { id },

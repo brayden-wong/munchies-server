@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "5aa4a8a7-87f7-434b-85d3-ba11744c1442",
+  "id": "7bfdd7c5-9e87-4c1f-b9d4-a6b27fb47fc1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -78,7 +78,65 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "friends": {
+      "name": "friends",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "friendId": {
+          "name": "friendId",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "friends_userId_users_id_fk": {
+          "name": "friends_userId_users_id_fk",
+          "tableFrom": "friends",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "friends_friendId_users_id_fk": {
+          "name": "friends_friendId_users_id_fk",
+          "tableFrom": "friends",
+          "tableTo": "users",
+          "columnsFrom": [
+            "friendId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "friends_userId_friendId": {
+          "name": "friends_userId_friendId",
+          "columns": [
+            "userId",
+            "friendId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "messages": {
       "name": "messages",
@@ -145,7 +203,8 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "recipes": {
       "name": "recipes",
@@ -211,7 +270,8 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "rooms": {
       "name": "rooms",
@@ -274,7 +334,8 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "sessions": {
       "name": "sessions",
@@ -336,7 +397,8 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "users": {
       "name": "users",
@@ -418,7 +480,8 @@
         }
       },
       "foreignKeys": {},
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "usersToRecipes": {
       "name": "usersToRecipes",
@@ -483,7 +546,8 @@
             "recipeId"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "usersToRooms": {
       "name": "usersToRooms",
@@ -539,7 +603,8 @@
             "roomId"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     }
   },
   "enums": {

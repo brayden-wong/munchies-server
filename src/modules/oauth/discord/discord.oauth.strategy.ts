@@ -24,6 +24,7 @@ export class DiscordOAuthStrategy extends PassportStrategy(
     profileData: Profile,
     done: Done,
   ) {
+    console.log(profileData);
     const profile = {
       providerId: profileData.id,
       username: profileData.username,

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 
 import { AccountsService, AuthService, UsersService } from "@/modules";
 import { DiscordProfile } from "./discord.types";
@@ -20,6 +20,8 @@ export class DiscordService {
       value: profile.email,
     });
 
+    console.log("values", exists, existingUserId);
+
     if (exists) {
       const existingAccount = await this.accountsService.getAccount({
         query: "userId",
@@ -27,9 +29,8 @@ export class DiscordService {
       });
 
       if (existingAccount.provider !== "discord")
-        throw new HttpException(
+        throw new ConflictException(
           "Email is already associated with another account",
-          HttpStatus.CONFLICT,
         );
 
       const session = await this.authService.login(existingUserId);

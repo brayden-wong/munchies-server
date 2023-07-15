@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS "accounts" (
 	"updatedAt" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "friends" (
+	"userId" varchar(36) NOT NULL,
+	"friendId" varchar(36) NOT NULL,
+	CONSTRAINT friends_userId_friendId PRIMARY KEY("userId","friendId")
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "messages" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"content" text,
@@ -62,17 +68,15 @@ CREATE TABLE IF NOT EXISTS "users" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "usersToRecipes" (
 	"userId" varchar(36) NOT NULL,
-	"recipeId" varchar(36) NOT NULL
+	"recipeId" varchar(36) NOT NULL,
+	CONSTRAINT usersToRecipes_userId_recipeId PRIMARY KEY("userId","recipeId")
 );
---> statement-breakpoint
-ALTER TABLE "usersToRecipes" ADD CONSTRAINT "usersToRecipes_userId_recipeId" PRIMARY KEY("userId","recipeId");
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "usersToRooms" (
 	"userId" varchar(36) NOT NULL,
-	"roomId" varchar(36) NOT NULL
+	"roomId" varchar(36) NOT NULL,
+	CONSTRAINT usersToRooms_userId_roomId PRIMARY KEY("userId","roomId")
 );
---> statement-breakpoint
-ALTER TABLE "usersToRooms" ADD CONSTRAINT "usersToRooms_userId_roomId" PRIMARY KEY("userId","roomId");
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "userIdIndex" ON "accounts" ("userId");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "providerIdIndex" ON "accounts" ("providerId");--> statement-breakpoint
@@ -84,6 +88,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS "emailIndex" ON "users" ("email");--> statemen
 CREATE INDEX IF NOT EXISTS "idIndex" ON "usersToRecipes" ("userId","recipeId");--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "friends" ADD CONSTRAINT "friends_userId_users_id_fk" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "friends" ADD CONSTRAINT "friends_friendId_users_id_fk" FOREIGN KEY ("friendId") REFERENCES "users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

@@ -12,6 +12,7 @@ import { usersToRecipes } from "./usersToRecipes";
 import { usersToRooms } from "./usersToRooms";
 import { messages } from "./messages";
 import { rooms } from "./rooms";
+import { friends } from "./friends";
 
 export const users = pgTable(
   "users",
@@ -49,6 +50,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
     fields: [users.id],
     references: [sessions.userId],
   }),
+  friends: many(friends),
   messages: many(messages),
   usersToRecipes: many(usersToRecipes),
   usersToRooms: many(usersToRooms),

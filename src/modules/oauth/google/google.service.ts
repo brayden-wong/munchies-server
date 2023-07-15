@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { AccountsService } from "@/modules/accounts";
 import { AuthService } from "@/modules/auth";
 import { UsersService } from "@/modules/users";
 import { GeneratorService } from "@/modules/utils";
 
 import { cuid } from "@/utils/functions";
-import type { CreateProfileReturnType, GoogleUser } from "./google.types";
+import type { GoogleUser } from "./google.types";
 
 @Injectable()
 export class GoogleService {
@@ -20,7 +20,7 @@ export class GoogleService {
     private readonly usersService: UsersService,
   ) {}
 
-  async createProfile(profile: GoogleUser): Promise<CreateProfileReturnType> {
+  async createProfile(profile: GoogleUser) {
     const { exists, id: existingUserId } = await this.usersService.userExists({
       query: "email",
       value: profile.email,
@@ -33,13 +33,12 @@ export class GoogleService {
       });
 
       if (existingAccount.provider !== "google")
-        throw new HttpException(
+        throw new ConflictException(
           "Email is already associated with another account",
-          HttpStatus.CONFLICT,
         );
       const { at, rt, session } = await this.authService.login(existingUserId);
 
-      return { user: null, account: null, auth: { at, rt, session } };
+      return { auth: { at, rt, session }, user: existingAccount.users };
     }
 
     const userId = cuid();
@@ -59,13 +58,13 @@ export class GoogleService {
 
     const session = await this.authService.login(user.id);
 
-    const account = await this.accountsService.createAccount({
+    await this.accountsService.createAccount({
       id: accountId,
       provider,
       providerId,
       userId,
     });
 
-    return { account, auth: session, user: newUser };
+    return { auth: session, user: newUser };
   }
 }

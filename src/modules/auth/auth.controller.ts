@@ -67,8 +67,11 @@ export class AuthController {
   @Public()
   @Patch("refresh")
   @UseGuards(RtGuard)
-  async refreshToken(@CurrentUser() user: RefreshToken) {
-    const { at, rt } = await this.authService.refreshToken(user.rt, user.id);
+  async refreshToken(
+    @CurrentUser({ user: "RefreshToken" }) user: RefreshToken,
+  ) {
+    console.log("user", user);
+    const { at, rt } = await this.authService.refreshToken(user.id, user.rt);
 
     return {
       status: "ok",

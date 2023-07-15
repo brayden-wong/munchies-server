@@ -65,6 +65,8 @@ export class SessionsService {
             .where(eq(sessions.userId, userId))
             .returning();
 
+          console.log("session", session);
+
           return session;
         });
 
@@ -75,6 +77,8 @@ export class SessionsService {
         const result = await tx.query.sessions.findFirst({
           where: eq(sessions.userId, userId),
         });
+
+        console.log("session", result);
 
         if (!result) throw new Error("Session not found");
 

@@ -207,6 +207,7 @@ export class UsersService {
       columns: { id: true },
       where: queryResult,
     });
+    console.log("query result", result);
 
     return result
       ? { exists: true, id: result.id }

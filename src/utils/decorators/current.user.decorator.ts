@@ -5,19 +5,23 @@ import { User } from "@/modules/users";
 import { createParamDecorator } from "@nestjs/common";
 import type { ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
+import { RefreshToken } from "../types";
 
 export const CurrentUser = createParamDecorator(
   (
     data: {
-      user: "User" | "GoogleUser" | "FacebookUser" | "DiscordUser";
-      key:
-        | (
-            | keyof User
-            | keyof GoogleUser
-            | keyof FacebookUser
-            | keyof DiscordProfile
-          )
-        | null;
+      user:
+        | "User"
+        | "GoogleUser"
+        | "FacebookUser"
+        | "DiscordUser"
+        | "RefreshToken";
+      key?:
+        | keyof User
+        | keyof GoogleUser
+        | keyof FacebookUser
+        | keyof DiscordProfile
+        | keyof RefreshToken;
     } = { user: "User", key: null },
     context: ExecutionContext,
   ) => {
@@ -47,6 +51,13 @@ export const CurrentUser = createParamDecorator(
     if (data.user === "DiscordUser") {
       const user = request.user as DiscordProfile;
       const key = data.key as keyof DiscordProfile;
+
+      return data.key ? user[key] : user;
+    }
+
+    if (data.user === "RefreshToken") {
+      const user = request.user as RefreshToken;
+      const key = data.key as keyof RefreshToken;
 
       return data.key ? user[key] : user;
     }
