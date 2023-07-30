@@ -14,7 +14,6 @@ export const accounts = pgTable(
   "accounts",
   {
     id: varchar("id", { length: 36 }).primaryKey().notNull(),
-
     provider: providers("provider").notNull(),
     providerId: varchar("providerId", { length: 255 }).notNull(),
 
@@ -34,5 +33,5 @@ export const accountRelations = relations(accounts, ({ one }) => ({
   users: one(users, {
     fields: [accounts.userId],
     references: [users.id],
-  })
+  }),
 }));

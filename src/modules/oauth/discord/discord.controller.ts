@@ -17,10 +17,7 @@ export class DiscordController {
   @Public()
   @UseGuards(DiscordOAuthGuard)
   @Get()
-  async discordLogin() {
-    console.log("endpoint hit");
-    return { message: "login" };
-  }
+  async discordLogin() {}
 
   @Public()
   @UseGuards(DiscordOAuthGuard)
@@ -29,18 +26,17 @@ export class DiscordController {
     @Res() res: Response,
     @CurrentUser({ user: "DiscordUser", key: null }) user: DiscordProfile,
   ) {
-    console.log("here");
     const { auth, user: currentUser } = await this.discordService.createProfile(
       user,
     );
 
-    const queryParams = `?at=${auth.at}&rt=${auth.rt}&userId=${
-      currentUser.id
-    }&username=${currentUser.username}&name=${currentUser.name ?? ""}&email=${
-      currentUser.email ?? ""
+    const queryParams = `?accessToken=${auth.accessToken}&refreshToken=${
+      auth.refreshToken
+    }&userId=${currentUser.id}&username=${currentUser.username}&name=${
+      currentUser.name ?? ""
+    }&email=${currentUser.email ?? ""}${
+      currentUser.avatar ? `&avatar=${currentUser.avatar}` : `&avatar=${null}`
     }`;
-
-    console.log(auth.rt);
 
     return res
       .status(200)

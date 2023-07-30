@@ -7,12 +7,13 @@ import {
   AccountsModule,
   AuthModule,
   DrizzleModule,
+  ExploreModule,
   OAuthModule,
+  RecipesModule,
   UsersModule,
+  WsModule,
 } from "@/modules";
-import { RecipesModule } from "./modules/recipes";
-import { WsModule } from "./modules/ws/ws.module";
-import {AppController} from './app.controller';
+import { AppController } from "./app.controller";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import {AppController} from './app.controller';
       envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     DrizzleModule,
+    ExploreModule,
     OAuthModule,
     RecipesModule,
     UsersModule,

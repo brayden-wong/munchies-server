@@ -23,14 +23,17 @@ export class FacebookController {
   @Public()
   @Get("redirect")
   @UseGuards(FacebookOAuthGuard)
-  async callback(@Res() res: Response, @CurrentUser() user: FacebookUser) {
+  async callback(
+    @Res() res: Response,
+    @CurrentUser({ user: "FacebookUser", key: undefined }) user: FacebookUser,
+  ) {
     const { auth, user: currentUser } =
       await this.facebookService.createProfile(user);
-    const queryParams = `?at=${auth.at}&rt=${auth.rt}&userId=${
-      currentUser.id
-    }&username=${currentUser.username}&name=${currentUser.name ?? ""}&email=${
-      currentUser.email ?? ""
-    }`;
+    const queryParams = `?at=${auth.accessToken}&rt=${
+      auth.refreshToken
+    }&userId=${currentUser.id}&username=${currentUser.username}&name=${
+      currentUser.name ?? ""
+    }&email=${currentUser.email ?? ""}`;
 
     return res
       .status(200)

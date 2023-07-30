@@ -1,6 +1,5 @@
 import {
   boolean,
-  json,
   pgTable,
   text,
   timestamp,
@@ -8,15 +7,14 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { usersToRecipes } from "./usersToRecipes";
-import { Ingredient, Steps } from "@/modules/recipes";
 import { users } from "./users";
+import { ingredients } from "./ingredients";
+import { steps } from "./steps";
 
 export const recipes = pgTable("recipes", {
   id: varchar("id", { length: 36 }).primaryKey(),
   name: varchar("name", { length: 60 }).notNull(),
   description: text("description").notNull(),
-  ingredients: json("ingredients").$type<Array<Ingredient>>().notNull(),
-  steps: json("steps").$type<Array<Steps>>().notNull(),
 
   public: boolean("public").notNull().default(false),
   authorId: varchar("authorId", { length: 36 }),
@@ -30,4 +28,7 @@ export const recipeRelations = relations(recipes, ({ many, one }) => ({
     fields: [recipes.authorId],
     references: [users.id],
   }),
+
+  ingredients: many(ingredients),
+  steps: many(steps),
 }));

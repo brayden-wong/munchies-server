@@ -23,14 +23,11 @@ export class WsGuard extends AuthGuard(GUARDS.AT) {
 
     const token = headers.authorization;
 
-    console.log(token);
-
     const userToken = await this.authService.validateToken(token);
 
     if (!userToken) throw new WsException("Invalid token");
 
     client["user"] = userToken;
-    console.log(userToken.id);
 
     return true;
   }

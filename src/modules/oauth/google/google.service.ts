@@ -36,25 +36,37 @@ export class GoogleService {
         throw new ConflictException(
           "Email is already associated with another account",
         );
-      const { at, rt, session } = await this.authService.login(existingUserId);
+      const { accessToken, refreshToken } = await this.authService.login(
+        existingUserId,
+      );
 
-      return { auth: { at, rt, session }, user: existingAccount.users };
+      return {
+        auth: { accessToken, refreshToken },
+        user: existingAccount.users,
+      };
     }
 
     const userId = cuid();
     const accountId = cuid();
     const username = await this.generatorService.generateUsername();
 
-    const { providerId, email, provider, picture: _, name } = profile;
+    const { providerId, email, provider, picture, name } = profile;
 
     const user = {
       id: userId,
       username,
       email: email.toLowerCase(),
+      avatar: picture,
       name,
     };
 
-    const newUser = await this.usersService.createUser(user);
+    const newUser = await this.usersService.createUser({
+      id: userId,
+      username,
+      email: email.toLowerCase(),
+      avatar: picture,
+      name,
+    });
 
     const session = await this.authService.login(user.id);
 

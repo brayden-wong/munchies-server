@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "65f4b63a-41c7-4710-b75e-e3f599edc0f0",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "5fefd24a-029e-4a32-9305-1673651d038f",
+  "prevId": "65f4b63a-41c7-4710-b75e-e3f599edc0f0",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -79,63 +79,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "friends": {
-      "name": "friends",
-      "schema": "",
-      "columns": {
-        "userId": {
-          "name": "userId",
-          "type": "varchar(36)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "friendId": {
-          "name": "friendId",
-          "type": "varchar(36)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "friends_userId_users_id_fk": {
-          "name": "friends_userId_users_id_fk",
-          "tableFrom": "friends",
-          "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "friends_friendId_users_id_fk": {
-          "name": "friends_friendId_users_id_fk",
-          "tableFrom": "friends",
-          "tableTo": "users",
-          "columnsFrom": [
-            "friendId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "friends_userId_friendId": {
-          "name": "friends_userId_friendId",
-          "columns": [
-            "userId",
-            "friendId"
-          ]
-        }
-      },
       "uniqueConstraints": {}
     },
     "messages": {

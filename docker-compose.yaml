@@ -15,21 +15,21 @@ services:
     volumes:
       - munchies:/var/lib/postgresql/data
 
-  dev:
-    build:
-      context: .
-      target: development
-      dockerfile: ./dockerfile
-    ports:
-      - 8080:8080
-    command: sh -c "./dev.sh"
-    networks:
-      - munchies-network
-    env_file: .env.docker
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: unless-stopped
+  # dev:
+  #   build:
+  #     context: .
+  #     target: development
+  #     dockerfile: ./dockerfile
+  #   ports:
+  #     - 8080:8080
+  #   command: sh -c "./dev.sh"
+  #   networks:
+  #     - munchies-network
+  #   env_file: .env.docker
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   restart: unless-stopped
 
   # prod:
   #   build:

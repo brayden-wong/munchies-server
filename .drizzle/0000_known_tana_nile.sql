@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"username" varchar(32) NOT NULL,
 	"email" varchar(60),
 	"password" varchar(255),
-	"deactivated" boolean DEFAULT false NOT NULL,
+	"avatar" text,
+	"active" boolean DEFAULT true NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"deletedAt" timestamp DEFAULT null

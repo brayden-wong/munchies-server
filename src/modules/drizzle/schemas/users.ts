@@ -1,6 +1,7 @@
 import {
   boolean,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   varchar,
@@ -12,6 +13,7 @@ import { usersToRecipes } from "./usersToRecipes";
 import { usersToRooms } from "./usersToRooms";
 import { messages } from "./messages";
 import { rooms } from "./rooms";
+import { recipes } from "./recipes";
 import { friends } from "./friends";
 
 export const users = pgTable(
@@ -23,7 +25,8 @@ export const users = pgTable(
     email: varchar("email", { length: 60 }),
     password: varchar("password", { length: 255 }),
 
-    deactivate: boolean("deactivated").notNull().default(false),
+    avatar: text("avatar"),
+    active: boolean("active").notNull().default(true),
 
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
@@ -50,8 +53,10 @@ export const userRelations = relations(users, ({ many, one }) => ({
     fields: [users.id],
     references: [sessions.userId],
   }),
-  friends: many(friends),
+  followers: many(friends, { relationName: "followers" }),
+  friends: many(friends, { relationName: "friends" }),
   messages: many(messages),
+  recipes: many(recipes),
   usersToRecipes: many(usersToRecipes),
   usersToRooms: many(usersToRooms),
 }));

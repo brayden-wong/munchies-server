@@ -6,3 +6,4 @@ export * from "./sessions";
 export * from "./users";
 export * from "./usersToRecipes";
 export * from "./usersToRooms";
+export * from "./friends";

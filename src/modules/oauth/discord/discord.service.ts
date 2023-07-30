@@ -1,6 +1,8 @@
 import { ConflictException, Inject, Injectable } from "@nestjs/common";
+import { UsersService } from "@/modules/users";
+import { AccountsService } from "@/modules/accounts";
+import { AuthService } from "@/modules/auth";
 
-import { AccountsService, AuthService, UsersService } from "@/modules";
 import { DiscordProfile } from "./discord.types";
 import { cuid } from "@/utils/functions";
 @Injectable()
@@ -20,8 +22,6 @@ export class DiscordService {
       value: profile.email,
     });
 
-    console.log("values", exists, existingUserId);
-
     if (exists) {
       const existingAccount = await this.accountsService.getAccount({
         query: "userId",
@@ -35,13 +35,18 @@ export class DiscordService {
 
       const session = await this.authService.login(existingUserId);
 
-      return { auth: session, user: existingAccount.users };
+      const { accessToken, refreshToken } = session;
+      return {
+        auth: { accessToken, refreshToken },
+        user: existingAccount.users,
+      };
     }
 
     const user = await this.usersService.createUser({
       id: cuid(),
       username: profile.username,
       email: profile.email,
+      avatar: profile.avatar,
     });
 
     const session = await this.authService.login(user.id);
@@ -60,6 +65,7 @@ export class DiscordService {
         name: user.name,
         username: user.username,
         email: user.email,
+        avatar: user.avatar,
       },
     };
   }

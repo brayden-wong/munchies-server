@@ -21,11 +21,11 @@ export class GoogleController {
   @UseGuards(GoogleOAuthGuard)
   async googleAuthRedirect(
     @Res() res: Response,
-    @CurrentUser() user: GoogleUser,
+    @CurrentUser({ user: "GoogleUser", key: undefined }) user: GoogleUser,
   ) {
     const result = await this.googleService.createProfile(user);
 
-    const queryParams = `?at=${result.auth.at}&rt=${result.auth.rt}&id=${result.auth.session.userId}`;
+    const queryParams = `?at=${result.auth.accessToken}&rt=${result.auth.refreshToken}&id=${result.user.id}`;
 
     return res
       .status(200)

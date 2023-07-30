@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, varchar } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { relations } from "drizzle-orm";
+import { users } from "./users";
 
 export const friends = pgTable(
   "friends",
@@ -19,10 +19,12 @@ export const friends = pgTable(
 
 export const friendsRelations = relations(friends, ({ one }) => ({
   user: one(users, {
+    relationName: "followers",
     fields: [friends.userId],
     references: [users.id],
   }),
   friend: one(users, {
+    relationName: "friends",
     fields: [friends.friendId],
     references: [users.id],
   }),

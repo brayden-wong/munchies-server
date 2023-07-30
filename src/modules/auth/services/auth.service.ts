@@ -33,20 +33,19 @@ export class AuthService {
   }
 
   async login(userId: string) {
-    console.log(userId);
     const isValidSession = await this.sessionsService.validateSession(userId);
 
-    const { at, rt } = await this.generateTokens(userId);
+    const { accessToken, refreshToken } = await this.generateTokens(userId);
 
     const session = isValidSession
       ? await this.sessionsService.updateSession(userId, {
           type: "login",
           userId,
-          refreshToken: rt,
+          refreshToken: refreshToken,
         })
       : await this.sessionsService.createSession({
           userId,
-          refreshToken: rt,
+          refreshToken: refreshToken,
         });
 
     if (!session)
@@ -55,7 +54,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    return { at, rt, session };
+    return { accessToken, refreshToken, session };
   }
 
   async validateToken(
@@ -79,24 +78,23 @@ export class AuthService {
     return decoded;
   }
 
-  async refreshToken(userId: string, refreshToken: string) {
-    const { at, rt } = await this.generateTokens(userId);
+  async refreshToken(userId: string, refresh_token: string) {
+    const { accessToken, refreshToken } = await this.generateTokens(userId);
 
     const session = await this.sessionsService.updateSession(userId, {
       type: "refresh",
-      newRefreshToken: rt,
-      oldRefreshToken: refreshToken,
+      newRefreshToken: refreshToken,
+      oldRefreshToken: refresh_token,
       userId,
     });
 
     if (!session) throw new HttpException("Invalid refresh token", 401);
 
-    return { at, rt, session };
+    return { accessToken, refreshToken, session };
   }
 
   private async generateTokens(id: string) {
-    console.log("id passed in to tokens\n", id);
-    const [at, rt] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { id },
         {
@@ -113,6 +111,6 @@ export class AuthService {
       ),
     ]);
 
-    return { at, rt } as const;
+    return { accessToken, refreshToken } as const;
   }
 }

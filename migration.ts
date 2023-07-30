@@ -41,12 +41,6 @@ const main = async () => {
 };
 
 main()
-  .catch((error) => {
-    console.error(error);
-  })
-  .then(() => {
-    console.log("migration complete");
-  })
-  .finally(() => {
-    process.exit(1);
-  });
+  .catch((error) => console.error(error))
+  .then(() => console.log("migration complete"))
+  .finally(() => process.exit(0));

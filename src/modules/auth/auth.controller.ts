@@ -48,37 +48,39 @@ export class AuthController {
   }
 
   @Public()
-  @Post("login")
   @UseGuards(LocalGuard)
+  @Post("login")
   async login(@UserId() userId: string) {
-    const { at, rt } = await this.authService.login(userId);
+    const { accessToken, refreshToken } = await this.authService.login(userId);
 
     return {
       status: "ok",
       statusCode: HttpStatus.OK,
       data: {
-        at,
-        rt,
+        accessToken,
+        refreshToken,
         userId,
       },
     };
   }
 
   @Public()
-  @Patch("refresh")
   @UseGuards(RtGuard)
+  @Patch("refresh")
   async refreshToken(
     @CurrentUser({ user: "RefreshToken" }) user: RefreshToken,
   ) {
-    console.log("user", user);
-    const { at, rt } = await this.authService.refreshToken(user.id, user.rt);
+    const { accessToken, refreshToken } = await this.authService.refreshToken(
+      user.id,
+      user.rt,
+    );
 
     return {
       status: "ok",
       statusCode: HttpStatus.OK,
       data: {
-        at,
-        rt,
+        accessToken,
+        refreshToken,
         userId: user.id,
       },
     };

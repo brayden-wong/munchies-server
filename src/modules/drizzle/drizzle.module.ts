@@ -47,16 +47,9 @@ import { DrizzleService } from "./drizzle.service";
           process.env.NODE_ENV === "docker" ? `:${config.port}` : ""
         }/${database}`;
 
-        console.log("uri", uri);
-
         const client = new Client({
           connectionString: uri,
-          ssl:
-            process.env.NODE_ENV === "production"
-              ? true
-              : process.env.NODE_ENV === "development"
-              ? true
-              : false,
+          ssl: process.env.NODE_ENV === "docker" ? false : true,
         });
 
         await client.connect();

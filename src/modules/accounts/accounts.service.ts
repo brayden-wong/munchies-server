@@ -34,6 +34,7 @@ export class AccountsService {
             username: true,
             email: true,
             name: true,
+            avatar: true,
           },
         },
       },

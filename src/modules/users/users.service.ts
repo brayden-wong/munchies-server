@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 
-import { InjectDrizzle, users } from "@/modules/drizzle";
+import { InjectDrizzle, recipes, users } from "@/modules/drizzle";
 import { CreateUserDto, FindOneParams, UpdateUserDto } from "./users.types";
 
 import type { Database } from "@/modules/drizzle";
@@ -11,8 +11,8 @@ import { cuid } from "@/utils";
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectDrizzle() private readonly db: Database,
     @Inject(HashService) private readonly hashService: HashService,
+    @InjectDrizzle() private readonly db: Database,
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
@@ -68,8 +68,43 @@ export class UsersService {
       .select()
       .from(users)
       .where(queryResult)
-      .orderBy(asc(users.username))
+      .limit(1)
       .execute();
+
+    return result;
+  }
+
+  //call a different method if the user is the same user else call a different method to grab the public recipes vs the private recipes
+  async getProfile({ query, value }: FindOneParams) {
+    const queryResult = await this.parseQuery({ query, value });
+
+    const result = await this.db.query.users.findFirst({
+      columns: {
+        id: true,
+        username: true,
+        name: true,
+        avatar: true,
+      },
+      with: {
+        recipes: {
+          columns: {
+            id: true,
+          },
+          where: and(eq(recipes.public, false)),
+        },
+        friends: {
+          columns: {
+            friendId: true,
+          },
+        },
+        followers: {
+          columns: {
+            userId: true,
+          },
+        },
+      },
+      where: queryResult,
+    });
 
     return result;
   }
@@ -132,7 +167,7 @@ export class UsersService {
 
         const [activatedUser] = await tx
           .update(users)
-          .set({ updatedAt: new Date(), deactivate: false })
+          .set({ updatedAt: new Date(), active: false })
           .where(eq(users.id, id))
           .returning();
 
@@ -159,7 +194,7 @@ export class UsersService {
 
         const [deactivatedUser] = await tx
           .update(users)
-          .set({ updatedAt: new Date(), deactivate: true })
+          .set({ updatedAt: new Date(), active: true })
           .where(eq(users.id, id))
           .returning();
 
@@ -207,7 +242,6 @@ export class UsersService {
       columns: { id: true },
       where: queryResult,
     });
-    console.log("query result", result);
 
     return result
       ? { exists: true, id: result.id }
